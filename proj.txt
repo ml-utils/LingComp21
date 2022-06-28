@@ -5,7 +5,17 @@ Obiettivo:
 Realizzazione di due programmi scritti in Python che utilizzino i moduli presenti in Natural
 Language Toolkit per leggere due file di testo in inglese, annotarli linguisticamente, confrontarli
 sulla base degli indici statistici richiesti ed estrarne le informazioni richieste.
+------------------------------------
 
+Fasi realizzative:
+Create due corpora in inglese di almeno 5000 parole, ognuno rappresentativo di un diverso genere
+testuale (per esempio testi giornalistici, prosa letteraria, blog, social media, articoli scientifici, etc). 
+I corpora devono essere salvati come file di testo semplice con codifca utf-8. 
+Sviluppate due programmi che prendono in input i due file da riga di comando, che li analizzano linguisticamente
+fino al Part-of-Speech tagging e che eseguono le operazioni richieste.
+
+
+------------------------------------
 Wikileaks Cablegate (genre: diplomatic communications)
 diplomatic cables from 2003 to 2010
 https://wikileaks.org/plusd/?qproject[]=cg&q=
