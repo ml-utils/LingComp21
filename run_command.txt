@@ -1,0 +1,1 @@
+python .\src\ling_com_21\compare_texts.py Cablegate.txt Colbert.txt

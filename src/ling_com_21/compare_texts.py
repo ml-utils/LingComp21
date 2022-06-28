@@ -1,8 +1,11 @@
 # from pathlib import Path
+import sys
+
 import nltk
 
 
 def read_files(filepath1: str, filepath2: str):
+    print(f"Caricamento dei file {filepath1} e {filepath2}")
     with open(filepath1, mode='r', encoding="utf-8") as fileInput1, \
             open(filepath2, mode='r', encoding="utf-8") as fileInput2:
         raw1 = fileInput1.read()
@@ -21,7 +24,7 @@ def read_files(filepath1: str, filepath2: str):
 def getWordTokenized(frasi):
     tokensTOT = []
     for frase in frasi:
-        print(f"{frase}")
+        # print(f"{frase}")
         tokens = nltk.word_tokenize(frase)
         tokensTOT += tokens
     return tokensTOT
@@ -78,7 +81,15 @@ def extract_info_from_txts():
 
 
 if __name__ == '__main__':
+
+    if len(sys.argv) >= 3:
+        filepath1 = sys.argv[1]
+        filepath2 = sys.argv[2]
+    else:
+        filepath1 = "..\\..\\Cablegate.txt"
+        filepath2 = "..\\..\\Colbert.txt"
+
     read_files(
-        filepath1="..\\..\\Cablegate.txt",
-        filepath2="..\\..\\Colbert.txt",
+        filepath1=filepath1,
+        filepath2=filepath2,
     )
