@@ -1,0 +1,15 @@
+Progetto di Linguistica Computazionale
+A.A. 2021/2022
+Linee guida
+Obiettivo:
+Realizzazione di due programmi scritti in Python che utilizzino i moduli presenti in Natural
+Language Toolkit per leggere due file di testo in inglese, annotarli linguisticamente, confrontarli
+sulla base degli indici statistici richiesti ed estrarne le informazioni richieste.
+
+Wikileaks Cablegate (genre: diplomatic communications)
+diplomatic cables from 2003 to 2010
+https://wikileaks.org/plusd/?qproject[]=cg&q=
+https://wikileaks.org/plusd/cables/09STATE80163_a.html
+
+Colbert transcritps:
+https://subslikescript.com/series/The_Late_Show_with_Stephen_Colbert-3697842/season-1/episode-2-Episode_12
