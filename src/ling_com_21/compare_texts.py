@@ -1,14 +1,37 @@
-from pathlib import Path
+# from pathlib import Path
+import nltk
 
 
-def read_files(filepath1: Path, filepath2: Path):
-    pass
+def read_files(filepath1: str, filepath2: str):
+    with open(filepath1, mode='r', encoding="utf-8") as fileInput1, \
+            open(filepath2, mode='r', encoding="utf-8") as fileInput2:
+        raw1 = fileInput1.read()
+        raw2 = fileInput2.read()
+    sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    frasi1 = sent_tokenizer.tokenize(raw1)
+    frasi2 = sent_tokenizer.tokenize(raw2)
+    tokensTOT_1 = getWordTokenized(frasi1)
+    tokensTOT_2 = getWordTokenized(frasi2)
+
+    # I due testi hanno rispettivamente 364 e 567 frasi.
+    # I due testi hanno rispettivamente 10339 e 6462 token totali.
+    print(f"I due testi hanno rispettivamente {len(frasi1)} e {len(frasi2)} frasi.")
+    print(f"I due testi hanno rispettivamente {len(tokensTOT_1)} e {len(tokensTOT_2)} token totali.")
+
+def getWordTokenized(frasi):
+    tokensTOT = []
+    for frase in frasi:
+        print(f"{frase}")
+        tokens = nltk.word_tokenize(frase)
+        tokensTOT += tokens
+    return tokensTOT
+
 
 def annotate():
     pass
 
 def compare_two_texts():
-
+    # Confrontate i due testi sulla base delle seguenti informazioni statistiche:
     #  il numero di frasi e di token;
     #  la lunghezza media delle frasi in termini di token e dei token (escludendo la punteggiatura)
     # in termini di caratteri;
@@ -23,7 +46,7 @@ def compare_two_texts():
     pass
 
 def extract_info_from_txts():
-    
+
     # Per ognuno dei due corpora estraete le seguenti informazioni:
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
@@ -53,3 +76,9 @@ def extract_info_from_txts():
     # output: file di testo contenenti l'output ben formattato dei programmi.
     pass
 
+
+if __name__ == '__main__':
+    read_files(
+        filepath1="..\\..\\Cablegate.txt",
+        filepath2="..\\..\\Colbert.txt",
+    )
