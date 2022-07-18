@@ -149,19 +149,19 @@ def read_files(filepath1: str, filepath2: str):
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for POS_with_freq in file_info["most_frequent_POS"]:
-            print(f"POS: {POS_with_freq[0]} -- freq: {POS_with_freq[1]}")
+            print(f"POS: {POS_with_freq[0]}----freq: {POS_with_freq[1]}")
 
     print(f"I 10 bigram di PoS più frequenti sono:")
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for bigram_with_freq in file_info["most_frequent_POS_bigrams"]:
-            print(f"POS Bigram: {bigram_with_freq[0]} -- freq: {bigram_with_freq[1]}")
+            print(f"POS Bigram: {bigram_with_freq[0]}----freq: {bigram_with_freq[1]}")
 
     print(f"I 10 trigrammi di PoS più frequenti sono:")
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for trigram_with_freq in file_info["most_frequent_POS_trigrams"]:
-            print(f"POS Trigram: {trigram_with_freq[0]} -- freq: {trigram_with_freq[1]}")
+            print(f"POS Trigram: {trigram_with_freq[0]}----freq: {trigram_with_freq[1]}")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
