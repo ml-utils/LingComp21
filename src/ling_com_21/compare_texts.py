@@ -21,6 +21,21 @@ def read_files(filepath1: str, filepath2: str):
     print(f"I due testi hanno rispettivamente {len(frasi1)} e {len(frasi2)} frasi.")
     print(f"I due testi hanno rispettivamente {len(tokensTOT_1)} e {len(tokensTOT_2)} token totali.")
 
+    # todo: extract filename only ("root") to print a file descrition and distinguish the two
+
+    # numero medio di token in una frase (escludendo la punteggiatura)
+    # numero medio dei caratteri di un token (escludendo la punteggiatura)
+
+    #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
+
+    #  la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
+    # Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
+    # di 500 token;
+    # (già fatto come esercizio)
+
+    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
+    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+
 def getWordTokenized(frasi):
     tokensTOT = []
     for frase in frasi:
