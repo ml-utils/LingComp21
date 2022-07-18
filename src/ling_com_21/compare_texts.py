@@ -57,6 +57,18 @@ def count_avg_token_lenght(pos_taggged_tokens: List[Tuple[str, str]], exclude_pu
     avg = charsTOTcount / tokens_count
     return tokens_count, charsTOTcount, avg
 
+
+def get_dict_frequenze_POS(listaPOS: List[str]):
+
+    frequenzePOS = dict()
+    TypePOS = set(listaPOS)
+    for POS in TypePOS:
+        freq = listaPOS.count(POS)
+        frequenzePOS[POS] = freq
+
+    return frequenzePOS
+
+
 def getFileAnalisysInfo(filepath: str) -> Dict:
     with open(filepath, mode='r', encoding="utf-8") as fileInput:
         raw = fileInput.read()
@@ -78,8 +90,19 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_taggged_tokens, exclude_punctuation=True)
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
+    #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
+    # frequenza:
+    # ◦ le 10 PoS (Part-of-Speech) più frequenti;
+    listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=False)
+    frequenzePOS = get_dict_frequenze_POS(listaPOS_inclusaPunteggiatura)
+    k = 10
+    topk_frequenzePOS = SortDecreasing(frequenzePOS)[:k]
+    file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
+
     return file_analisys_info
 
+def SortDecreasing(sort_me: Dict):
+    return sorted(sort_me.items(), key=lambda x: x[1], reverse=True)
 
 def read_files(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
@@ -108,6 +131,12 @@ def read_files(filepath1: str, filepath2: str):
           f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
           f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).")
 
+    print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
+    file_infos = [file_analisys_info1, file_analisys_info2]
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        for POS_with_freq in file_info["most_frequent_POS"]:
+            print(f"POS: {POS_with_freq[0]} -- freq: {POS_with_freq[1]}")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
