@@ -1,6 +1,7 @@
 # from pathlib import Path
+import os
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import nltk
 
@@ -56,36 +57,56 @@ def count_avg_token_lenght(pos_taggged_tokens: List[Tuple[str, str]], exclude_pu
     avg = charsTOTcount / tokens_count
     return tokens_count, charsTOTcount, avg
 
-def read_files(filepath1: str, filepath2: str):
-    print(f"Caricamento dei file {filepath1} e {filepath2}")
-    with open(filepath1, mode='r', encoding="utf-8") as fileInput1, \
-            open(filepath2, mode='r', encoding="utf-8") as fileInput2:
-        raw1 = fileInput1.read()
-        raw2 = fileInput2.read()
+def getFileAnalisysInfo(filepath: str) -> Dict:
+    with open(filepath, mode='r', encoding="utf-8") as fileInput:
+        raw = fileInput.read()
+
+    #  il numero di frasi e di token:
     sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
-    frasi1 = sent_tokenizer.tokenize(raw1)
-    frasi2 = sent_tokenizer.tokenize(raw2)
-    tokensTOT_1 = getWordTokenized(frasi1)
-    tokensTOT_2 = getWordTokenized(frasi2)
-
-    # I due testi hanno rispettivamente 364 e 567 frasi.
-    # I due testi hanno rispettivamente 10339 e 6462 token totali.
-    print(f"I due testi hanno rispettivamente {len(frasi1)} e {len(frasi2)} frasi.")
-    print(f"I due testi hanno rispettivamente {len(tokensTOT_1)} e {len(tokensTOT_2)} token totali.")
-
-    # todo: extract filename only ("root") to print a file descrition and distinguish the two
-
-    # come escludere la punteggiatura dalle analisi? excludere i POS tag di punteggiatura
+    frasi = sent_tokenizer.tokenize(raw)
+    tokensTOT = getWordTokenized(frasi)
+    file_analisys_info = dict()
+    file_analisys_info["filename"] = os.path.basename(filepath)
+    file_analisys_info["num_sentences"] = len(frasi)
+    file_analisys_info["num_tokens"] = len(tokensTOT)
 
     # numero medio di token in una frase (escludendo la punteggiatura)
-    tokensTOT, pos_taggged_tokens = GetPosTaggedTokens(frasi1)
+    tokensTOT, pos_taggged_tokens = GetPosTaggedTokens(frasi)
     listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=True)
-    avg_tokens_per_sentence = len(listaPOS_SenzaPunteggiatura) / len (frasi1)
-    print(f"avg_tokens_per_sentence={avg_tokens_per_sentence}")
+    file_analisys_info["avg_tokens_per_sentence"] = len(listaPOS_SenzaPunteggiatura) / len (frasi)
 
-    # numero medio dei caratteri di un token (escludendo la punteggiatura)
-    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_taggged_tokens)
-    print(f"avg_chars_per_token={avg_chars_per_token}")
+    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_taggged_tokens, exclude_punctuation=True)
+    file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
+
+    return file_analisys_info
+
+
+def read_files(filepath1: str, filepath2: str):
+    print(f"Caricamento dei file {filepath1} e {filepath2}")
+
+    file_analisys_info1 = getFileAnalisysInfo(filepath1)
+    file_analisys_info2 = getFileAnalisysInfo(filepath2)
+    filename1 = file_analisys_info1['filename']
+    filename2 = file_analisys_info2['filename']
+    print(f"Analisi dei due testi {filename1} e {filename2} :")
+
+    print(f"Numero di frasi: "
+          f"{file_analisys_info1['num_sentences']} ({filename1}) e "
+          f"{file_analisys_info2['num_sentences']} ({filename2}).")
+
+    print(f"Numero di token totali: "
+          f"{file_analisys_info1['num_tokens']} ({filename1}) e "
+          f"{file_analisys_info2['num_tokens']} ({filename2}).")
+    # I due testi hanno rispettivamente 364 e 567 frasi.
+    # I due testi hanno rispettivamente 10339 e 6462 token totali.
+
+    print(f"Numero medio di token in una frase (escludendo la punteggiatura): "
+          f"{file_analisys_info1['avg_tokens_per_sentence']:.2f} ({filename1}) e "
+          f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2}).")
+
+    print(f"Numero medio dei caratteri di un token (escludendo la punteggiatura): "
+          f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
+          f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).")
 
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
@@ -97,6 +118,8 @@ def read_files(filepath1: str, filepath2: str):
 
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+
+    # todo: calcoli su POS e frequenza, bi e tri-grammi pos
 
 def getWordTokenized(frasi):
     tokensTOT = []
