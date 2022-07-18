@@ -116,6 +116,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     POSbigrams = nltk.bigrams(listaPOS_inclusaPunteggiatura)
     topk_POSbigrams = get_dict_frequenze(list(POSbigrams), sorted=True, topk=k)
     file_analisys_info["most_frequent_POS_bigrams"] = topk_POSbigrams
+    # i 10 trigrammi di PoS più frequenti;
+    POStrigrams = nltk.trigrams(listaPOS_inclusaPunteggiatura)
+    topk_POStrigrams = get_dict_frequenze(list(POStrigrams), sorted=True, topk=k)
+    file_analisys_info["most_frequent_POS_trigrams"] = topk_POStrigrams
 
     return file_analisys_info
 
@@ -149,19 +153,25 @@ def read_files(filepath1: str, filepath2: str):
           f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
           f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).")
 
-    print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
     file_infos = [file_analisys_info1, file_analisys_info2]
+
+    print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for POS_with_freq in file_info["most_frequent_POS"]:
             print(f"POS: {POS_with_freq[0]} -- freq: {POS_with_freq[1]}")
 
-    print(f"I 10 bigram di PoS (Part-of-Speech) più frequenti sono:")
-    file_infos = [file_analisys_info1, file_analisys_info2]
+    print(f"I 10 bigram di PoS più frequenti sono:")
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
-        for bigrams_with_freq in file_info["most_frequent_POS_bigrams"]:
-            print(f"POS Bigram: {bigrams_with_freq[0]} -- freq: {bigrams_with_freq[1]}")
+        for bigram_with_freq in file_info["most_frequent_POS_bigrams"]:
+            print(f"POS Bigram: {bigram_with_freq[0]} -- freq: {bigram_with_freq[1]}")
+
+    print(f"I 10 trigrammi di PoS più frequenti sono:")
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        for trigram_with_freq in file_info["most_frequent_POS_trigrams"]:
+            print(f"POS Trigram: {trigram_with_freq[0]} -- freq: {trigram_with_freq[1]}")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
