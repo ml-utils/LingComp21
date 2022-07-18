@@ -1,8 +1,60 @@
 # from pathlib import Path
 import sys
+from typing import List, Tuple
 
 import nltk
 
+ALL_PUNKTUATION = [".", ",", ":", "(", ")"] # "SYM" (todo: verify what symbols include)
+
+def EstraiFrasi(filepath: str) -> List[str]:
+
+    with open(filepath, mode="r", encoding="utf-8") as fileInput1:
+        raw1 = fileInput1.read()
+    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
+
+    return sent_tokenizer.tokenize(raw1)
+
+# slides name "AnnotazioneLinguistica"
+def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
+    tokensTOT: List[str] = []
+    pos_taggged_tokens: List[Tuple[str, str]] = []
+    for frase in frasi:
+        tokens = nltk.word_tokenize(frase)
+        tokensTOT += tokens
+        pos_taggged_tokens_this_sentence = nltk.pos_tag(tokens)
+        pos_taggged_tokens += pos_taggged_tokens_this_sentence
+    return tokensTOT, pos_taggged_tokens
+
+def EstraiSequenzaPos(pos_taggged_tokens: List[Tuple[str, str]], exclude_punctuation=False) -> List[str]:
+    listaPOS: List[str] = []
+    TOKEN_IDX = 0
+    POS_IDX = 1
+    for pos_taggged_token in pos_taggged_tokens:
+        if exclude_punctuation and pos_taggged_token[POS_IDX] in ALL_PUNKTUATION:
+            continue
+        else:
+            listaPOS.append(pos_taggged_token[POS_IDX])
+    return listaPOS
+
+def count_avg_tokens_per_sentence(frasi: List[str], exclude_punctuation=True):
+    for frase in frasi:
+        tokens = nltk.word_tokenize(frase)
+        pos_taggged_tokens_this_sentence = nltk.pos_tag(tokens)
+
+def count_avg_token_lenght(pos_taggged_tokens: List[Tuple[str, str]], exclude_punctuation: bool=True):
+    TOKEN_IDX = 0
+    POS_IDX = 1
+    tokens_count = 0
+    charsTOTcount = 0
+    for pos_taggged_token in pos_taggged_tokens:
+        if exclude_punctuation and pos_taggged_token[POS_IDX] in ALL_PUNKTUATION:
+            continue
+        else:
+            tokens_count += 1
+            charsTOTcount += len(pos_taggged_token[TOKEN_IDX])
+
+    avg = charsTOTcount / tokens_count
+    return tokens_count, charsTOTcount, avg
 
 def read_files(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
@@ -23,8 +75,18 @@ def read_files(filepath1: str, filepath2: str):
 
     # todo: extract filename only ("root") to print a file descrition and distinguish the two
 
+    # come escludere la punteggiatura dalle analisi? excludere i POS tag di punteggiatura
+
     # numero medio di token in una frase (escludendo la punteggiatura)
+    tokensTOT, pos_taggged_tokens = GetPosTaggedTokens(frasi1)
+    listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=True)
+    avg_tokens_per_sentence = len(listaPOS_SenzaPunteggiatura) / len (frasi1)
+    print(f"avg_tokens_per_sentence={avg_tokens_per_sentence}")
+
     # numero medio dei caratteri di un token (escludendo la punteggiatura)
+    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_taggged_tokens)
+    print(f"avg_chars_per_token={avg_chars_per_token}")
+
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
@@ -94,9 +156,7 @@ def extract_info_from_txts():
     # output: file di testo contenenti l'output ben formattato dei programmi.
     pass
 
-
-if __name__ == '__main__':
-
+def main():
     if len(sys.argv) >= 3:
         filepath1 = sys.argv[1]
         filepath2 = sys.argv[2]
@@ -108,3 +168,6 @@ if __name__ == '__main__':
         filepath1=filepath1,
         filepath2=filepath2,
     )
+
+if __name__ == '__main__':
+    main()
