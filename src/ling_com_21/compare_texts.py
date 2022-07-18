@@ -6,6 +6,7 @@ from typing import List, Tuple, Dict, Any, Optional
 import nltk
 
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"] # "SYM" (todo: verify what symbols include)
+ADJECTIVES = ["JJ", "JJR", "JJS"]
 
 def EstraiFrasi(filepath: str) -> List[str]:
 
@@ -18,19 +19,19 @@ def EstraiFrasi(filepath: str) -> List[str]:
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
     tokensTOT: List[str] = []
-    pos_taggged_tokens: List[Tuple[str, str]] = []
+    pos_tagged_tokens: List[Tuple[str, str]] = []
     for frase in frasi:
         tokens = nltk.word_tokenize(frase)
         tokensTOT += tokens
-        pos_taggged_tokens_this_sentence = nltk.pos_tag(tokens)
-        pos_taggged_tokens += pos_taggged_tokens_this_sentence
-    return tokensTOT, pos_taggged_tokens
+        pos_tagged_tokens_this_sentence = nltk.pos_tag(tokens)
+        pos_tagged_tokens += pos_tagged_tokens_this_sentence
+    return tokensTOT, pos_tagged_tokens
 
-def EstraiSequenzaPos(pos_taggged_tokens: List[Tuple[str, str]], exclude_punctuation=False) -> List[str]:
+def EstraiSequenzaPos(pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation=False) -> List[str]:
     listaPOS: List[str] = []
     TOKEN_IDX = 0
     POS_IDX = 1
-    for pos_taggged_token in pos_taggged_tokens:
+    for pos_taggged_token in pos_tagged_tokens:
         if exclude_punctuation and pos_taggged_token[POS_IDX] in ALL_PUNKTUATION:
             continue
         else:
@@ -40,14 +41,14 @@ def EstraiSequenzaPos(pos_taggged_tokens: List[Tuple[str, str]], exclude_punctua
 def count_avg_tokens_per_sentence(frasi: List[str], exclude_punctuation=True):
     for frase in frasi:
         tokens = nltk.word_tokenize(frase)
-        pos_taggged_tokens_this_sentence = nltk.pos_tag(tokens)
+        pos_tagged_tokens_this_sentence = nltk.pos_tag(tokens)
 
-def count_avg_token_lenght(pos_taggged_tokens: List[Tuple[str, str]], exclude_punctuation: bool=True):
+def count_avg_token_lenght(pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation: bool=True):
     TOKEN_IDX = 0
     POS_IDX = 1
     tokens_count = 0
     charsTOTcount = 0
-    for pos_taggged_token in pos_taggged_tokens:
+    for pos_taggged_token in pos_tagged_tokens:
         if exclude_punctuation and pos_taggged_token[POS_IDX] in ALL_PUNKTUATION:
             continue
         else:
@@ -67,12 +68,29 @@ def get_dict_frequenze(
     freqDistribution = nltk.FreqDist(mylist)
     topk_elements = freqDistribution.most_common(topk)
     topk_elements_as_dict = {x[0]: x[1] for x in topk_elements}
+
     return topk_elements_as_dict
 
 
 def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[str, int]:
 
     return get_dict_frequenze(listaPOS, sorted=sorted, topk=topk)
+
+
+def get_tokens_filterd_by_POS(
+        pos_tagged_tokens: List[Tuple[str, str]],
+        wanted_POS: List[str]
+) -> List[str]:
+
+    TOK_IDX = 0
+    POS_IDX = 1
+
+    POS_list = []
+    for pos_tagged_token in pos_tagged_tokens:
+        if pos_tagged_token[POS_IDX] in wanted_POS:
+            POS_list += pos_tagged_token[TOK_IDX]
+
+    return POS_list
 
 
 def getFileAnalisysInfo(filepath: str) -> Dict:
@@ -89,17 +107,17 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     file_analisys_info["num_tokens"] = len(tokensTOT)
 
     # numero medio di token in una frase (escludendo la punteggiatura)
-    tokensTOT, pos_taggged_tokens = GetPosTaggedTokens(frasi)
-    listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=True)
+    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
+    listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(pos_tagged_tokens, exclude_punctuation=True)
     file_analisys_info["avg_tokens_per_sentence"] = len(listaPOS_SenzaPunteggiatura) / len (frasi)
 
-    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_taggged_tokens, exclude_punctuation=True)
+    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_tagged_tokens, exclude_punctuation=True)
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
-    listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=False)
+    listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_tagged_tokens, exclude_punctuation=False)
     k = 10
     topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, sorted=True, topk=k)
     file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
@@ -110,6 +128,11 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     POStrigrams = nltk.trigrams(listaPOS_inclusaPunteggiatura)
     topk_POStrigrams = get_dict_frequenze(list(POStrigrams), sorted=True, topk=k)
     file_analisys_info["most_frequent_POS_trigrams"] = topk_POStrigrams
+
+    k2 = 20
+    adjectives = get_tokens_filterd_by_POS(pos_tagged_tokens, ADJECTIVES)
+    topk_adjectives = get_dict_frequenze(list(adjectives), sorted=True, topk=k2)
+    file_analisys_info["most_frequent_adjectives"] = topk_adjectives
 
     return file_analisys_info
 
@@ -144,24 +167,14 @@ def read_files(filepath1: str, filepath2: str):
           f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).")
 
     file_infos = [file_analisys_info1, file_analisys_info2]
-
     print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
-    for file_info in file_infos:
-        print(f"{file_info['filename']}: ")
-        for POS_with_freq in file_info["most_frequent_POS"]:
-            print(f"POS: {POS_with_freq[0]}----freq: {POS_with_freq[1]}")
-
+    print_info_helper(file_infos, "most_frequent_POS", "POS")
     print(f"I 10 bigram di PoS più frequenti sono:")
-    for file_info in file_infos:
-        print(f"{file_info['filename']}: ")
-        for bigram_with_freq in file_info["most_frequent_POS_bigrams"]:
-            print(f"POS Bigram: {bigram_with_freq[0]}----freq: {bigram_with_freq[1]}")
-
+    print_info_helper(file_infos, "most_frequent_POS_bigrams", "POS Bigram")
     print(f"I 10 trigrammi di PoS più frequenti sono:")
-    for file_info in file_infos:
-        print(f"{file_info['filename']}: ")
-        for trigram_with_freq in file_info["most_frequent_POS_trigrams"]:
-            print(f"POS Trigram: {trigram_with_freq[0]}----freq: {trigram_with_freq[1]}")
+    print_info_helper(file_infos, "most_frequent_POS_trigrams", "POS Trigram")
+    print(f"I 20 Aggettivi più frequenti sono:")
+    print_info_helper(file_infos, "most_frequent_adjectives", "Adj")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
@@ -174,6 +187,12 @@ def read_files(filepath1: str, filepath2: str):
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
     # todo: calcoli su POS e frequenza, bi e tri-grammi pos
+
+def print_info_helper(file_infos, elements_key:str, element_descr: str):
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        for element_with_freq in file_info[elements_key].items():
+            print(f"{element_descr}: {element_with_freq[0]}  ----freq: {element_with_freq[1]}")
 
 def getWordTokenized(frasi):
     tokensTOT = []
@@ -210,6 +229,7 @@ def extract_info_from_txts():
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
     # ◦ i 10 bigrammi di PoS più frequenti;
     # ◦ i 10 trigrammi di PoS più frequenti;
+    
     # ◦ i 20 Aggettivi e i 20 Avverbi più frequenti;
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
     # una frequenza maggiore di 3:
