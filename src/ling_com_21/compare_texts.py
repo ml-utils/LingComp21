@@ -1,7 +1,7 @@
 # from pathlib import Path
 import os
 import sys
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any, Optional
 
 import nltk
 
@@ -58,15 +58,31 @@ def count_avg_token_lenght(pos_taggged_tokens: List[Tuple[str, str]], exclude_pu
     return tokens_count, charsTOTcount, avg
 
 
-def get_dict_frequenze_POS(listaPOS: List[str]):
+def get_dict_frequenze(
+        mylist: List[Any],
+        sorted:bool=True,
+        topk: Optional[int]=None
+) -> Dict[Any, int]:
 
-    frequenzePOS = dict()
-    TypePOS = set(listaPOS)
-    for POS in TypePOS:
-        freq = listaPOS.count(POS)
-        frequenzePOS[POS] = freq
+    elements_and_freqs = dict()
+    TypeElements = set(mylist)
 
-    return frequenzePOS
+    for TypeElement in TypeElements:
+        freq = mylist.count(TypeElement)
+        elements_and_freqs[TypeElement] = freq
+
+    if sorted:
+        elements_and_freqs = SortDecreasing(elements_and_freqs)
+
+    if topk is not None:
+        elements_and_freqs = elements_and_freqs[:topk]
+
+    return elements_and_freqs
+
+
+def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[str, int]:
+
+    return get_dict_frequenze(listaPOS, sorted=sorted, topk=topk)
 
 
 def getFileAnalisysInfo(filepath: str) -> Dict:
@@ -94,10 +110,12 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     # frequenza:
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
     listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_taggged_tokens, exclude_punctuation=False)
-    frequenzePOS = get_dict_frequenze_POS(listaPOS_inclusaPunteggiatura)
     k = 10
-    topk_frequenzePOS = SortDecreasing(frequenzePOS)[:k]
+    topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, sorted=True, topk=k)
     file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
+    POSbigrams = nltk.bigrams(listaPOS_inclusaPunteggiatura)
+    topk_POSbigrams = get_dict_frequenze(list(POSbigrams), sorted=True, topk=k)
+    file_analisys_info["most_frequent_POS_bigrams"] = topk_POSbigrams
 
     return file_analisys_info
 
@@ -137,6 +155,13 @@ def read_files(filepath1: str, filepath2: str):
         print(f"{file_info['filename']}: ")
         for POS_with_freq in file_info["most_frequent_POS"]:
             print(f"POS: {POS_with_freq[0]} -- freq: {POS_with_freq[1]}")
+
+    print(f"I 10 bigram di PoS (Part-of-Speech) più frequenti sono:")
+    file_infos = [file_analisys_info1, file_analisys_info2]
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        for bigrams_with_freq in file_info["most_frequent_POS_bigrams"]:
+            print(f"POS Bigram: {bigrams_with_freq[0]} -- freq: {bigrams_with_freq[1]}")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
