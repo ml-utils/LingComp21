@@ -64,20 +64,10 @@ def get_dict_frequenze(
         topk: Optional[int]=None
 ) -> Dict[Any, int]:
 
-    elements_and_freqs = dict()
-    TypeElements = set(mylist)
-
-    for TypeElement in TypeElements:
-        freq = mylist.count(TypeElement)
-        elements_and_freqs[TypeElement] = freq
-
-    if sorted:
-        elements_and_freqs = SortDecreasing(elements_and_freqs)
-
-    if topk is not None:
-        elements_and_freqs = elements_and_freqs[:topk]
-
-    return elements_and_freqs
+    freqDistribution = nltk.FreqDist(mylist)
+    topk_elements = freqDistribution.most_common(topk)
+    topk_elements_as_dict = {x[0]: x[1] for x in topk_elements}
+    return topk_elements_as_dict
 
 
 def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[str, int]:
