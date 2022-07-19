@@ -7,12 +7,12 @@ from typing import List, Tuple, Dict, Any, Optional, Union
 
 import nltk  # type: ignore
 
+# Penn Tree Bank tagset lists
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
 ADVERBS = ["RB", "RBR", "RBS", "WRB"]
 NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
 PROPER_NOUNS = ["NNP", "NNPS"]
-PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 VERBS = ["VB", "VBD", "VBG", "VBN", "VBP", "VBZ"]
 CONTENT_WORDS = ADJECTIVES + NOUNS + VERBS + ADVERBS
 ARTICLES = ["DT", "WDT"]
@@ -35,6 +35,9 @@ OTHER = [
     "LS",  # list item marker
     "SYM",  # symbol
 ]
+
+# Named Entities classes
+PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
@@ -506,6 +509,19 @@ def program1_compare(
     # TODO:
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+    file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(pos_tagged_tokens, CONTENT_WORDS)
+    file_analisys_info["perc_functional_words"] = get_percentage_of_word_classes(pos_tagged_tokens, FUNCTIONAL_WORDS)
+
+
+def get_percentage_of_word_classes(pos_tagged_tokens, word_classes: List[str]):
+
+    POS_IDX = 1
+    tokens_count = 0
+    for pos_taggged_token in pos_tagged_tokens:
+        if pos_taggged_token[POS_IDX] in word_classes:
+            tokens_count += 1
+
+    return tokens_count / len(pos_tagged_tokens)
 
 def program2_extract_info(
     file_analisys_info: Dict[str, Any],
@@ -610,7 +626,6 @@ def program2_extract_info(
     # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
     # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
     # e dividendo la somma delle frequenze per il numero di token della frase stessa;
-    # TODO
     sentences_with_average_token_freq = get_sentences_with_average_token_freq(
         filtered_sentences,
         word_and_freqs,
@@ -734,10 +749,16 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
             TTR = file_analisys_info["incremental_vocab_info"][corpus_limit]["TTR"]
             print(f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}")
 
-    # TODO:
-    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
-    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
-
+    print(
+        f"Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : "
+        f"{file_analisys_info1['perc_content_words']:.2%} ({filename1}) e "
+        f"{file_analisys_info2['perc_content_words']:.2%} ({filename2})."
+    )
+    print(
+        f"Percentuale delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi) : "
+        f"{file_analisys_info1['perc_functional_words']:.2%} ({filename1}) e "
+        f"{file_analisys_info2['perc_functional_words']:.2%} ({filename2})."
+    )
 
 def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
 
