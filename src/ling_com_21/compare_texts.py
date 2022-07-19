@@ -7,37 +7,9 @@ from typing import List, Tuple, Dict, Any, Optional, Union
 
 import nltk  # type: ignore
 
-# Penn Tree Bank tagset lists
-ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols include)
-ADJECTIVES = ["JJ", "JJR", "JJS"]
-ADVERBS = ["RB", "RBR", "RBS", "WRB"]
-NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
-PROPER_NOUNS = ["NNP", "NNPS"]
-VERBS = ["VB", "VBD", "VBG", "VBN", "VBP", "VBZ"]
-CONTENT_WORDS = ADJECTIVES + NOUNS + VERBS + ADVERBS
-ARTICLES = ["DT", "WDT"]
-PREPOSITIONS = ["IN"]
-CONJUNCTIONS = ["CC"]
-PRONOUNS = ["PRP", "PRP$", "WP", "WP$"]
-OTHER_FUNCTIONAL = [
-    "EX",  # Existential there
-    "MD",  # Modal
-    "PDT", # Predeterminer
-    "POS", # possessive ending
-    "RP", # particle
-    "TO", # to
-    "UH", # interjection
-]
-FUNCTIONAL_WORDS = ARTICLES + PREPOSITIONS + CONJUNCTIONS + PRONOUNS + OTHER_FUNCTIONAL
-OTHER = [
-    "CD",  # CARDINAL NUMBER
-    "FW",  # foreign word
-    "LS",  # list item marker
-    "SYM",  # symbol
-]
+from utils import ALL_PUNKTUATION, ADJECTIVES, ADVERBS, NOUNS, \
+    PROPER_NOUNS, CONTENT_WORDS, FUNCTIONAL_WORDS, PERSON_NE_CLASS
 
-# Named Entities classes
-PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
@@ -506,11 +478,10 @@ def program1_compare(
     file_analisys_info["num_hapax_first_1000_tokens"] = get_hapax_count(tokensTOT, tokens_limit=1000)
     file_analisys_info["incremental_vocab_info"] = get_incremental_vocab_info(tokensTOT, corpus_lenght_increments=500)
 
-    # TODO:
-    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
-    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
-    file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(pos_tagged_tokens, CONTENT_WORDS)
-    file_analisys_info["perc_functional_words"] = get_percentage_of_word_classes(pos_tagged_tokens, FUNCTIONAL_WORDS)
+    file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(pos_tagged_tokens,
+                                                                              CONTENT_WORDS)
+    file_analisys_info["perc_functional_words"] = get_percentage_of_word_classes(pos_tagged_tokens,
+                                                                                 FUNCTIONAL_WORDS)
 
 
 def get_percentage_of_word_classes(pos_tagged_tokens, word_classes: List[str]):
