@@ -7,6 +7,7 @@ import nltk
 
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"] # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
+ADVERBS = ["RB", "RBR", "RBS", "WRB"]
 
 def EstraiFrasi(filepath: str) -> List[str]:
 
@@ -134,6 +135,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     topk_adjectives = get_dict_frequenze(list(adjectives), sorted=True, topk=k2)
     file_analisys_info["most_frequent_adjectives"] = topk_adjectives
 
+    adverbs = get_tokens_filterd_by_POS(pos_tagged_tokens, ADVERBS)
+    topk_adverbs = get_dict_frequenze(list(adverbs), sorted=True, topk=k2)
+    file_analisys_info["most_frequent_adverbs"] = topk_adverbs
+
     return file_analisys_info
 
 def SortDecreasing(sort_me: Dict):
@@ -173,8 +178,10 @@ def read_files(filepath1: str, filepath2: str):
     print_info_helper(file_infos, "most_frequent_POS_bigrams", "POS Bigram")
     print(f"I 10 trigrammi di PoS più frequenti sono:")
     print_info_helper(file_infos, "most_frequent_POS_trigrams", "POS Trigram")
-    print(f"I 20 Aggettivi più frequenti sono:")
+    print(f"I 20 aggettivi più frequenti sono:")
     print_info_helper(file_infos, "most_frequent_adjectives", "Adj")
+    print(f"I 20 avverbi più frequenti sono:")
+    print_info_helper(file_infos, "most_frequent_adverbs", "Adv")
 
     #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
 
