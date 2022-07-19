@@ -71,6 +71,41 @@ def get_word_types_with_freq(
     return word_types_with_freq
 
 
+def get_hapax_count(tokensTOT: List[str], tokens_limit: int) -> int:
+    tokensTOTsliced = tokensTOT[:tokens_limit]
+    word_types_with_freq = get_word_types_with_freq(tokensTOTsliced)
+
+    hapax_list = []
+    for word, freq in word_types_with_freq.items():
+        if freq == 1:
+            hapax_list.append(word)
+
+    return len(hapax_list)
+
+
+def get_incremental_vocab_info(
+    tokensTOT: List[str],
+    corpus_lenght_increments: int,
+):
+    incremental_vocab_info: Dict[int, Dict[str, float]] = dict()
+
+    totalCorpusLenght = len(tokensTOT)
+    # num_steps = totalCorpusLenght // corpus_lenght_increments
+    range_start = min(totalCorpusLenght, corpus_lenght_increments)
+    range_stop = totalCorpusLenght
+    range_step = corpus_lenght_increments
+    for tokens_limit in range(range_start, range_stop, range_step):
+        limitedTokens = tokensTOT[:tokens_limit]
+        vocab_size = len(set(limitedTokens))
+        type_token_ratio = vocab_size / tokens_limit
+
+        incremental_vocab_info[tokens_limit] = dict()
+        incremental_vocab_info[tokens_limit]["vocab_size"] = vocab_size
+        incremental_vocab_info[tokens_limit]["TTR"] = type_token_ratio
+
+    return incremental_vocab_info
+
+
 def get_dict_frequenze(mylist: List[Any], topk: Optional[int] = None) -> Dict[Any, int]:
 
     freqDistribution = nltk.FreqDist(mylist)
@@ -449,6 +484,14 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     )
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
+    file_analisys_info["num_hapax_first_1000_tokens"] = get_hapax_count(tokensTOT, tokens_limit=1000)
+    file_analisys_info["incremental_vocab_info"] = get_incremental_vocab_info(tokensTOT, corpus_lenght_increments=500)
+
+    # TODO:
+    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
+    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+
+
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
@@ -639,14 +682,21 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2})."
     )
 
+    print(
+        f"Numero di hapax sui primi 1000 token: "
+        f"{file_analisys_info1['num_hapax_first_1000_tokens']} ({filename1}) e "
+        f"{file_analisys_info2['num_hapax_first_1000_tokens']} ({filename2})."
+    )
+
+    print(f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):")
+    for file_analisys_info in [file_analisys_info1, file_analisys_info2]:
+        print(f"{filename1} :")
+        for corpus_limit in file_analisys_info["incremental_vocab_info"]:
+            vocab_size = file_analisys_info["incremental_vocab_info"][corpus_limit]["vocab_size"]
+            TTR = file_analisys_info["incremental_vocab_info"][corpus_limit]["TTR"]
+            print(f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}")
+
     # TODO:
-    #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
-
-    #  la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
-    # Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
-    # di 500 token;
-    # (già fatto come esercizio)
-
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
