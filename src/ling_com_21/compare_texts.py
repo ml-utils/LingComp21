@@ -249,6 +249,45 @@ def get_tokens_filterd_by_POS(
     return POS_list
 
 
+def filter_NE(
+    NEs: Dict[Tuple[str, str], List[str]],
+    wanted_POSes: List[str] = PROPER_NOUNS,
+    wanted_NE_classes: List[str] = [PERSON_NE_CLASS],
+) -> List[str]:
+
+    named_entity_list = []
+    for wanted_NE_class in wanted_NE_classes:
+        for wanted_POS in wanted_POSes:
+            key: Tuple[str, str] = tuple((wanted_NE_class, wanted_POS))
+            if key in NEs:
+                named_entity_list += NEs[key]
+
+    return named_entity_list
+
+
+def get_all_NEs(
+    tokensPOS: List[Tuple[str, str]],
+) -> Dict[Tuple[str, str], List[str]]:
+
+    # individuato e classificato le Entità Nominate (NE) presenti nel testo
+
+    NE_by_class_and_POS: Dict[Tuple[str, str], List[str]] = dict()
+    ne_chunk = nltk.ne_chunk(tokensPOS)
+    TOK_IDX = 0
+    POS_IDX = 1
+    for node in ne_chunk:
+        is_intermediate_node = hasattr(node, 'label')
+        if is_intermediate_node:
+            if node.label() in ["PERSON", "GPE", "ORGANIZATION"]:
+                for leaf in node.leaves():
+                    key: Tuple[str, str] = tuple((node.label(), leaf[POS_IDX]))
+                    if key not in NE_by_class_and_POS:
+                        NE_by_class_and_POS[key] = []
+                    NE_by_class_and_POS[key].append(leaf[TOK_IDX])
+
+    return NE_by_class_and_POS
+
+
 def getFileAnalisysInfo(filepath: str) -> Dict:
     with open(filepath, mode="r", encoding="utf-8") as fileInput:
         raw = fileInput.read()
@@ -459,45 +498,6 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
     )
     print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure = "freq")
-
-
-def filter_NE(
-    NEs: Dict[Tuple[str, str], List[str]],
-    wanted_POSes: List[str] = PROPER_NOUNS,
-    wanted_NE_classes: List[str] = [PERSON_NE_CLASS],
-) -> List[str]:
-
-    named_entity_list = []
-    for wanted_NE_class in wanted_NE_classes:
-        for wanted_POS in wanted_POSes:
-            key: Tuple[str, str] = tuple((wanted_NE_class, wanted_POS))
-            if key in NEs:
-                named_entity_list += NEs[key]
-
-    return named_entity_list
-
-
-def get_all_NEs(
-    tokensPOS: List[Tuple[str, str]],
-) -> Dict[Tuple[str, str], List[str]]:
-
-    # individuato e classificato le Entità Nominate (NE) presenti nel testo
-
-    NE_by_class_and_POS: Dict[Tuple[str, str], List[str]] = dict()
-    ne_chunk = nltk.ne_chunk(tokensPOS)
-    TOK_IDX = 0
-    POS_IDX = 1
-    for node in ne_chunk:
-        is_intermediate_node = hasattr(node, 'label')
-        if is_intermediate_node:
-            if node.label() in ["PERSON", "GPE", "ORGANIZATION"]:
-                for leaf in node.leaves():
-                    key: Tuple[str, str] = tuple((node.label(), leaf[POS_IDX]))
-                    if key not in NE_by_class_and_POS:
-                        NE_by_class_and_POS[key] = []
-                    NE_by_class_and_POS[key].append(leaf[TOK_IDX])
-
-    return NE_by_class_and_POS
 
 
 def analize_files_and_print_results(filepath1: str, filepath2: str):
