@@ -72,7 +72,7 @@ def count_avg_token_lenght(
 
 
 def get_dict_frequenze(
-    mylist: List[Any], sorted: bool = True, topk: Optional[int] = None
+    mylist: List[Any], topk: Optional[int] = None
 ) -> Dict[Any, int]:
 
     freqDistribution = nltk.FreqDist(mylist)
@@ -173,13 +173,6 @@ def filter_bigrams_by_measure(
                 break
 
     return topk_bigrams_by_measure
-
-
-def get_dict_frequenze_POS(
-    listaPOS: List[str], sorted=True, topk=None
-) -> Dict[str, int]:
-
-    return get_dict_frequenze(listaPOS, sorted=sorted, topk=topk)
 
 
 def EstraiBigrammiPos(
@@ -286,7 +279,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     file_analisys_info["most_frequent_adjectives"] = topk_adjectives
 
     adverbs = get_tokens_filterd_by_POS(pos_tagged_tokens, ADVERBS)
-    topk_adverbs = get_dict_frequenze(list(adverbs), sorted=True, topk=k2)
+    topk_adverbs = get_dict_frequenze(list(adverbs), topk=k2)
     file_analisys_info["most_frequent_adverbs"] = topk_adverbs
 
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo
