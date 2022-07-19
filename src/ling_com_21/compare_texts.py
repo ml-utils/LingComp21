@@ -241,7 +241,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 def SortDecreasing(sort_me: Dict) -> Dict:
     return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
 
-def read_files(filepath1: str, filepath2: str):
+def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
 
     file_analisys_info1 = getFileAnalisysInfo(filepath1)
@@ -374,7 +374,7 @@ def main():
         filepath1 = "..\\..\\Cablegate.txt"
         filepath2 = "..\\..\\Colbert.txt"
 
-    read_files(
+    analize_files_and_print_results(
         filepath1=filepath1,
         filepath2=filepath2,
     )
