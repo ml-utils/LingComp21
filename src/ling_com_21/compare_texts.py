@@ -73,6 +73,50 @@ def get_dict_frequenze(
 
     return topk_elements_as_dict
 
+def get_bigrams_with_conditioned_probability(
+        allCorpusTokens: List[str],
+        topk: Optional[int] = None,
+) -> Dict[Tuple[str, str], float]:
+    # topk_POSbigrams = get_dict_frequenze(adj_noun_bigrams_filtered, topk=k2)
+
+    # NB: conditioned probability calculated based on all bigrams in corpus, not just the filtered ones
+    allCorpusBigrams = list(nltk.bigrams(allCorpusTokens))
+
+    bigrams_with_conditioned_probability = dict()
+    uniqueBigrams = set(allCorpusBigrams)
+    for bigramma in uniqueBigrams:
+        frequenzaBigramma = allCorpusBigrams.count(bigramma)
+        TOKEN_A_IDX = 0
+        frequenzaA = allCorpusTokens.count(bigramma[TOKEN_A_IDX])
+        probCondizionata = frequenzaBigramma / frequenzaA
+        bigrams_with_conditioned_probability[bigramma] = probCondizionata
+
+    bigrams_with_conditioned_probability = SortDecreasing(bigrams_with_conditioned_probability)
+
+    if topk is not None:
+        bigrams_with_conditioned_probability = dict(list(bigrams_with_conditioned_probability.items())[0: topk])
+
+    return bigrams_with_conditioned_probability
+
+
+def filter_bigrams_by_conditioned_probability(
+        tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str]]],  # example:
+        bigrams_with_conditioned_probability: Dict[Tuple[str, str], float],
+        topk: int,
+) -> Dict[Tuple[str, str], float]:
+
+    TOK_IDX = 0
+    bare_bigrams_to_filter = [(x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter]
+
+    topk_bigrams_by_conditioned_probability = dict()
+    for top_prob_bigram, prob in bigrams_with_conditioned_probability.items():
+        if top_prob_bigram in bare_bigrams_to_filter:
+            topk_bigrams_by_conditioned_probability[top_prob_bigram] = prob
+            if len(topk_bigrams_by_conditioned_probability) == topk:
+                break
+
+    return topk_bigrams_by_conditioned_probability
+
 
 def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[str, int]:
 
@@ -138,7 +182,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     frasi = sent_tokenizer.tokenize(raw)
     tokensTOT = getWordTokenized(frasi)
-    file_analisys_info = dict()
+    file_analisys_info: Dict[str, Any] = dict()
     file_analisys_info["filename"] = os.path.basename(filepath)
     file_analisys_info["num_sentences"] = len(frasi)
     file_analisys_info["num_tokens"] = len(tokensTOT)
@@ -175,25 +219,27 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     topk_adverbs = get_dict_frequenze(list(adverbs), sorted=True, topk=k2)
     file_analisys_info["most_frequent_adverbs"] = topk_adverbs
 
-    #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
-    # una frequenza maggiore di 3:
-    # ◦ con frequenza massima, indicando anche la relativa frequenza;
-    # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
-    # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
-    # indicando anche la relativa forza associativa;
+    #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo
     tokens_and_freqs = get_dict_frequenze(tokensTOT)
     adj_noun_bigrams = EstraiBigrammiPos(pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS)
     # dove ogni token ha una frequenza maggiore di 3:
+    adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(adj_noun_bigrams, tokens_and_freqs, min_freq=4)
+    # ◦ con frequenza massima, indicando anche la relativa frequenza;
+    # TODO
+    # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
+    bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(tokensTOT)
+    topk_adj_noun_by_cond_prob = filter_bigrams_by_conditioned_probability(adj_noun_bigrams_filtered_by_tokfreq, bigrams_with_conditioned_probability, topk=k2)
+    file_analisys_info["topk_adj_noun_by_cond_prob"] = topk_adj_noun_by_cond_prob
 
-    adj_noun_bigrams_filtered = filterBigramsByTokenFreq(adj_noun_bigrams, tokens_and_freqs, min_freq=4)
-    print(f"adj_noun_bigrams_filtered={adj_noun_bigrams_filtered[:10]}")
-    # probabilità condizionata bigrams ..
+    # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
+    # indicando anche la relativa forza associativa;
+
     # Local Mutual Information bigrams..
 
     return file_analisys_info
 
-def SortDecreasing(sort_me: Dict):
-    return sorted(sort_me.items(), key=lambda x: x[1], reverse=True)
+def SortDecreasing(sort_me: Dict) -> Dict:
+    return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
 
 def read_files(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
@@ -245,12 +291,17 @@ def read_files(filepath1: str, filepath2: str):
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
     # todo: calcoli su POS e frequenza, bi e tri-grammi pos
+    print(f"I 20 bigrammi composti da Aggettivo e Sostantivo "
+          f"(dove ogni token ha una frequenza maggiore di 3), "
+          f"con probabilità condizionata massima, sono:")
+    print_info_helper(file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond")
 
-def print_info_helper(file_infos, elements_key:str, element_descr: str):
+
+def print_info_helper(file_infos, elements_key:str, element_descr: str, measure="freq"):
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for element_with_freq in file_info[elements_key].items():
-            print(f"{element_descr}: {element_with_freq[0]}  ----freq: {element_with_freq[1]}")
+            print(f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}")
 
 def getWordTokenized(frasi):
     tokensTOT = []
