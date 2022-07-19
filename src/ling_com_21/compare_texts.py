@@ -83,10 +83,7 @@ def get_word_types_with_freq(
     return word_types_with_freq
 
 
-def get_dict_frequenze(
-    mylist: List[Any],
-    topk: Optional[int] = None
-) -> Dict[Any, int]:
+def get_dict_frequenze(mylist: List[Any], topk: Optional[int] = None) -> Dict[Any, int]:
 
     freqDistribution = nltk.FreqDist(mylist)
     topk_elements = freqDistribution.most_common(topk)
@@ -96,14 +93,14 @@ def get_dict_frequenze(
 
 
 def get_bigrams_with_measures(
-        allCorpusTokens: List[str],
-        word_types_with_freq: Dict[str, int],
-        bigrams_with_frequency: Dict[Tuple[str, str], int],
-        # topk: Optional[int] = None,
-)-> Tuple[
-    Dict[Tuple[str, str], float], # bigrams_with_LMM
-    Dict[Tuple[str, str], float], # bigrams_with_conditioned_probability
-    ]:  # todo: return named tuple
+    allCorpusTokens: List[str],
+    word_types_with_freq: Dict[str, int],
+    bigrams_with_frequency: Dict[Tuple[str, str], int],
+    # topk: Optional[int] = None,
+) -> Tuple[
+    Dict[Tuple[str, str], float],  # bigrams_with_LMM
+    Dict[Tuple[str, str], float],  # bigrams_with_conditioned_probability
+]:  # todo: return named tuple
 
     # topk_POSbigrams = get_dict_frequenze(adj_noun_bigrams_filtered, topk=k2)
 
@@ -160,7 +157,9 @@ def get_bigrams_with_frequency(
 
 def filter_bigrams_by_measure(
     tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
-    bigrams_with_measure: Union[Dict[Tuple[str, str], float], Dict[Tuple[str, str], int]],
+    bigrams_with_measure: Union[
+        Dict[Tuple[str, str], float], Dict[Tuple[str, str], int]
+    ],
     topk: int,
 ) -> Dict[Tuple[str, str], float]:
     """
@@ -312,7 +311,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     file_analisys_info["topk_adj_noun_by_freq"] = topk_adj_noun_by_freq
 
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
-    bigrams_with_LMM, bigrams_with_conditioned_probability = get_bigrams_with_measures( # get_bigrams_with_conditioned_probability(
+    (
+        bigrams_with_LMM,
+        bigrams_with_conditioned_probability,
+    ) = get_bigrams_with_measures(  # get_bigrams_with_conditioned_probability(
         tokensTOT,
         tokens_and_freqs,
         bigrams_with_frequency,
@@ -338,6 +340,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
 def SortDecreasing(sort_me: Dict) -> Dict:
     return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
+
 
 def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
@@ -401,9 +404,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"(dove ogni token ha una frequenza maggiore di 3), "
         f"con frequenza massima, sono:"
     )
-    print_info_helper(
-        file_infos, "topk_adj_noun_by_freq", "Bigram", measure="freq"
-    )
+    print_info_helper(file_infos, "topk_adj_noun_by_freq", "Bigram", measure="freq")
 
     print(
         f"I 20 bigrammi composti da Aggettivo e Sostantivo "
@@ -419,9 +420,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"(dove ogni token ha una frequenza maggiore di 3), "
         f"con Local Mutual Information (LMM) massima, sono:"
     )
-    print_info_helper(
-        file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM"
-    )
+    print_info_helper(file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM")
 
     # TODO:
     #  estraete le frasi con almeno 6 token e più corta di 25 token, dove ogni singolo token occorre
@@ -439,6 +438,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
     # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
 
+
 def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
 
@@ -452,6 +452,7 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     print_results_helper_pt2(file_analisys_info1, file_analisys_info2)
 
     # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
+
 
 def print_info_helper(
     file_infos, elements_key: str, element_descr: str, measure="freq"
