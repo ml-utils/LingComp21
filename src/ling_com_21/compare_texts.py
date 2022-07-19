@@ -5,7 +5,7 @@ import sys
 from itertools import islice
 from typing import List, Tuple, Dict, Any, Optional, Union
 
-import nltk
+import nltk  # type: ignore
 
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
@@ -184,13 +184,13 @@ def get_bigrams_with_frequency(
 
 def filter_NE_by_measure(
     selected_NE_list,
-    tokens_and_freqs,  # check that this is sorted in decreasing order
+    word_and_freqs,  # check that this is sorted in decreasing order
     topk: int,
 ):
     unique_selected_NEs = set(selected_NE_list)
     unique_selected_NEs_with_freq = dict()
     for unique_selected_NE in unique_selected_NEs:
-        freq = tokens_and_freqs[unique_selected_NE]
+        freq = word_and_freqs[unique_selected_NE]
         unique_selected_NEs_with_freq[unique_selected_NE] = freq
 
     top_el = dict(
@@ -321,6 +321,7 @@ def get_all_NEs(
 
     return NE_by_class_and_POS
 
+
 def filter_sentences(
     sentences: List[str],
     words_and_freqs: Dict[str, int],
@@ -345,7 +346,7 @@ def filter_sentences(
 
 def get_sentences_with_markov2_probs(
     sentences: List[str],
-    tokens_and_freqs: Dict[str, int],
+    word_and_freqs: Dict[str, int],
     tokens_count: int,
     bigrams_with_conditioned_probability,
     trigrams_with_conditioned_probability,
@@ -356,7 +357,7 @@ def get_sentences_with_markov2_probs(
         sentence_tokens = nltk.word_tokenize(sentence)
         sentence_prob = get_sentence_prob_markov2(
             sentence_tokens,
-            tokens_and_freqs,
+            word_and_freqs,
             tokens_count,
             bigrams_with_conditioned_probability,
             trigrams_with_conditioned_probability,
@@ -366,9 +367,34 @@ def get_sentences_with_markov2_probs(
     return SortDecreasing(sentences_with_markov2_probs)
 
 
+def get_sentences_with_average_token_freq(
+    sentences: List[str],
+    word_and_freqs: Dict[str, int],
+) -> Dict[str, float]:
+    """
+
+    :param sentences:
+    :param word_and_freqs:
+    :return: a dictionary with key the sentence text, and value the average token frequency.
+    The dictionary is sorted in decreasing order by values.
+    """
+    sentences_with_average_token_freq: Dict[str, float] = dict()
+
+    for sentence in sentences:
+        sentence_tokens = nltk.word_tokenize(sentence)
+
+        token_freqs_sum = 0
+        for token in sentence_tokens:
+            token_freqs_sum += word_and_freqs[token]
+        average_token_freq = token_freqs_sum / len(sentence_tokens)
+        sentences_with_average_token_freq[sentence] = average_token_freq
+
+    return SortDecreasing(sentences_with_average_token_freq)
+
+
 def get_sentence_prob_markov2(
     sentence_tokens,
-    tokens_and_freqs,
+    word_and_freqs,
     tokens_count: int,
     bigrams_with_conditioned_probability,
     trigrams_with_conditioned_probability,
@@ -376,7 +402,7 @@ def get_sentence_prob_markov2(
     sentence_prob = 1.0
 
     first_token: str = sentence_tokens[0]
-    first_token_prob = tokens_and_freqs[first_token] / tokens_count
+    first_token_prob = word_and_freqs[first_token] / tokens_count
     sentence_prob *= first_token_prob
     if len(sentence_tokens) == 1:
         return sentence_prob
@@ -520,6 +546,37 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
     # e dividendo la somma delle frequenze per il numero di token della frase stessa;
     # TODO
+    sentences_with_average_token_freq = get_sentences_with_average_token_freq(
+        filtered_sentences,
+        word_and_freqs,
+    )
+    text_of_top_sentence_for_average_token_freq = list(
+        sentences_with_average_token_freq
+    )[0]
+    prob_of_top_sentence_for_average_token_freq = sentences_with_average_token_freq[
+        text_of_top_sentence_for_average_token_freq
+    ]
+    top_sentence_for_average_token_freq = (
+        text_of_top_sentence_for_average_token_freq,
+        prob_of_top_sentence_for_average_token_freq,
+    )
+    file_analisys_info[
+        "top_sentence_for_average_token_freq"
+    ] = top_sentence_for_average_token_freq
+
+    text_of_last_sentence_for_average_token_freq = list(
+        sentences_with_average_token_freq
+    )[-1]
+    prob_of_last_sentence_for_average_token_freq = sentences_with_average_token_freq[
+        text_of_last_sentence_for_average_token_freq
+    ]
+    last_sentence_for_average_token_freq = (
+        text_of_last_sentence_for_average_token_freq,
+        prob_of_last_sentence_for_average_token_freq,
+    )
+    file_analisys_info[
+        "last_sentence_for_average_token_freq"
+    ] = last_sentence_for_average_token_freq
 
     # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
     # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
@@ -539,9 +596,9 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
         trigrams_with_conditioned_probability,
     )
 
-    top_sentence = list(sentences_with_markov2_probs)[0]
-    top_sentence_prob = sentences_with_markov2_probs[top_sentence]
-    max_mkv2_prob_sentence = (top_sentence, top_sentence_prob)
+    top_sentence_for_prob = list(sentences_with_markov2_probs)[0]
+    prob_of_top_sentence_for_prob = sentences_with_markov2_probs[top_sentence_for_prob]
+    max_mkv2_prob_sentence = (top_sentence_for_prob, prob_of_top_sentence_for_prob)
     file_analisys_info["max_mkv2_prob_sentence"] = max_mkv2_prob_sentence
 
     return file_analisys_info
@@ -636,6 +693,27 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"di cui ogni singolo token occorre almeno due volte nel corpus di riferimento, "
         f"vi sono:"
     )
+
+    print(f"Con la media della distribuzione di frequenza dei token più alta:")
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        top_sentence_for_average_token_freq = file_info[
+            "top_sentence_for_average_token_freq"
+        ]
+        print(
+            f"Avg. freq.: {top_sentence_for_average_token_freq[1]} testo: {top_sentence_for_average_token_freq[0]}"
+        )
+
+    print(f"Con la media della distribuzione di frequenza dei token più bassa:")
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        last_sentence_for_average_token_freq = file_info[
+            "last_sentence_for_average_token_freq"
+        ]
+        print(
+            f"Avg. freq.: {last_sentence_for_average_token_freq[1]} testo: {last_sentence_for_average_token_freq[0]}"
+        )
+
     print(f"con con probabilità più alta secondo un modello di Markov di ordine 2:")
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
