@@ -47,12 +47,6 @@ def EstraiSequenzaPos(
     return listaPOS
 
 
-def count_avg_tokens_per_sentence(frasi: List[str], exclude_punctuation=True):
-    for frase in frasi:
-        tokens = nltk.word_tokenize(frase)
-        pos_tagged_tokens_this_sentence = nltk.pos_tag(tokens)
-
-
 def count_avg_token_lenght(
     pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation: bool = True
 ):
@@ -158,7 +152,8 @@ def get_bigrams_with_frequency(
 def filter_bigrams_by_measure(
     tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
     bigrams_with_measure: Union[
-        Dict[Tuple[str, str], float], Dict[Tuple[str, str], int]
+        Dict[Tuple[str, str], float],
+        Dict[Tuple[str, str], int]
     ],
     topk: int,
 ) -> Dict[Tuple[str, str], float]:
@@ -245,14 +240,15 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     #  il numero di frasi e di token:
     sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
     frasi = sent_tokenizer.tokenize(raw)
-    tokensTOT = getWordTokenized(frasi)
+    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
+
     file_analisys_info: Dict[str, Any] = dict()
     file_analisys_info["filename"] = os.path.basename(filepath)
     file_analisys_info["num_sentences"] = len(frasi)
     file_analisys_info["num_tokens"] = len(tokensTOT)
 
     # numero medio di token in una frase (escludendo la punteggiatura)
-    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
+
     listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(
         pos_tagged_tokens, exclude_punctuation=True
     )
@@ -423,8 +419,9 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     print_info_helper(file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM")
 
     # TODO:
-    #  estraete le frasi con almeno 6 token e più corta di 25 token, dove ogni singolo token occorre
-    # almeno due volte nel corpus di riferimento:
+    #  estraete le frasi con almeno 6 token e più corta di 25 token,
+    # dove ogni singolo token occorre almeno due volte nel corpus di riferimento:
+
     # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
     # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
     # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
@@ -438,6 +435,19 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
     # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
 
+def get_NE(
+        tokens,
+        tokensPOS,
+):
+    ne_chunk = nltk.ne_chunk(tokensPOS)
+    named_entity_list = []
+    for node in ne_chunk:
+        is_intermediate_node = hasattr(node, 'label')
+        if is_intermediate_node:
+            if node.label() in ["PERSON"]:  # , "GPE", "ORGANIZATION"
+                for leaf in node.leaves:
+                    print(leaf)
+                    named_entity_list.append(leaf)
 
 def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
@@ -463,15 +473,6 @@ def print_info_helper(
             print(
                 f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}"
             )
-
-
-def getWordTokenized(frasi):
-    tokensTOT = []
-    for frase in frasi:
-        # print(f"{frase}")
-        tokens = nltk.word_tokenize(frase)
-        tokensTOT += tokens
-    return tokensTOT
 
 
 def main():
