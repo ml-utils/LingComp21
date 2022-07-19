@@ -79,6 +79,7 @@ def get_dict_frequenze(mylist: List[Any], topk: Optional[int] = None) -> Dict[An
 
     return topk_elements_as_dict
 
+
 def get_trigrams_with_frequency(
     allCorpusTokens: List[str],
 ) -> Dict[Tuple[str, str, str], int]:
@@ -96,6 +97,7 @@ def get_trigrams_with_frequency(
         trigrams_with_frequency[trigramma] = frequenzaTrigramma
 
     return SortDecreasing(trigrams_with_frequency)
+
 
 def get_trigrams_with_conditioned_probability(
     allCorpusTokens: List[str],
@@ -115,6 +117,7 @@ def get_trigrams_with_conditioned_probability(
         trigrams_with_conditioned_probability[trigramma] = probCondizionataBigramma
 
     return trigrams_with_conditioned_probability
+
 
 def get_bigrams_with_measures(
     allCorpusTokens: List[str],
@@ -158,9 +161,6 @@ def get_bigrams_with_measures(
     )
 
     return bigrams_with_LMM, bigrams_with_conditioned_probability
-
-
-
 
 
 def get_bigrams_with_frequency(
@@ -520,6 +520,7 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
+
 def filter_sentences(
     sentences: List[str],
     words_and_freqs: Dict[str, int],
@@ -541,12 +542,13 @@ def filter_sentences(
 
     return filtered_sentences
 
+
 def get_sentences_with_markov2_probs(
-        sentences: List[str],
-        tokens_and_freqs: Dict[str, int],
-        tokens_count: int,
-        bigrams_with_conditioned_probability,
-        trigrams_with_conditioned_probability,
+    sentences: List[str],
+    tokens_and_freqs: Dict[str, int],
+    tokens_count: int,
+    bigrams_with_conditioned_probability,
+    trigrams_with_conditioned_probability,
 ):
 
     sentences_with_markov2_probs: Dict[str, float] = dict()
@@ -565,11 +567,11 @@ def get_sentences_with_markov2_probs(
 
 
 def get_sentence_prob_markov2(
-        sentence_tokens,
-        tokens_and_freqs,
-        tokens_count: int,
-        bigrams_with_conditioned_probability,
-        trigrams_with_conditioned_probability,
+    sentence_tokens,
+    tokens_and_freqs,
+    tokens_count: int,
+    bigrams_with_conditioned_probability,
+    trigrams_with_conditioned_probability,
 ):
     sentence_prob = 1.0
 
@@ -639,9 +641,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         max_mkv2_prob_sentence = file_info["max_mkv2_prob_sentence"]
-        print(
-            f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}"
-        )
+        print(f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}")
 
     # TODO:
     #  estraete le frasi con almeno 6 token e più corta di 25 token,
