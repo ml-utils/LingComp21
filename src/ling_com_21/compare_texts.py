@@ -81,6 +81,7 @@ def get_dict_frequenze(
 
     return topk_elements_as_dict
 
+
 def get_bigrams_with_LMM(
     allCorpusTokens: List[str],
 ) -> Dict[Tuple[str, str], float]:
@@ -104,6 +105,21 @@ def get_bigrams_with_LMM(
         bigrams_with_LMM[bigramma] = bigram_LocalMutualInformation
 
     return bigrams_with_LMM
+
+
+def get_bigrams_with_frequency(
+    allCorpusTokens: List[str],
+) -> Dict[Tuple[str, str], int]:
+
+    allCorpusBigrams: List[Tuple[str, str]] = list(nltk.bigrams(allCorpusTokens))
+    bigrams_with_frequency: Dict[Tuple[str, str], int] = dict()
+
+    uniqueBigrams = set(allCorpusBigrams)
+    for bigramma in uniqueBigrams:
+        frequenzaBigramma = allCorpusBigrams.count(bigramma)
+        bigrams_with_frequency[bigramma] = frequenzaBigramma
+
+    return bigrams_with_frequency
 
 
 def get_bigrams_with_conditioned_probability(
@@ -136,9 +152,9 @@ def get_bigrams_with_conditioned_probability(
     return bigrams_with_conditioned_probability
 
 
-def filter_bigrams_by_conditioned_probability(
+def filter_bigrams_by_measure(
     tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
-    bigrams_with_conditioned_probability: Dict[Tuple[str, str], float],
+    bigrams_with_measure: Dict[Tuple[str, str], float],
     topk: int,
 ) -> Dict[Tuple[str, str], float]:
 
@@ -147,14 +163,14 @@ def filter_bigrams_by_conditioned_probability(
         (x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter
     ]
 
-    topk_bigrams_by_conditioned_probability = dict()
-    for top_prob_bigram, prob in bigrams_with_conditioned_probability.items():
-        if top_prob_bigram in bare_bigrams_to_filter:
-            topk_bigrams_by_conditioned_probability[top_prob_bigram] = prob
-            if len(topk_bigrams_by_conditioned_probability) == topk:
+    topk_bigrams_by_measure = dict()
+    for top_bigram, measure in bigrams_with_measure.items():
+        if top_bigram in bare_bigrams_to_filter:
+            topk_bigrams_by_measure[top_bigram] = measure
+            if len(topk_bigrams_by_measure) == topk:
                 break
 
-    return topk_bigrams_by_conditioned_probability
+    return topk_bigrams_by_measure
 
 
 def get_dict_frequenze_POS(
@@ -288,7 +304,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(
         tokensTOT
     )
-    topk_adj_noun_by_cond_prob = filter_bigrams_by_conditioned_probability(
+    topk_adj_noun_by_cond_prob = filter_bigrams_by_measure(
         adj_noun_bigrams_filtered_by_tokfreq,
         bigrams_with_conditioned_probability,
         topk=k2,
@@ -297,11 +313,13 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
     # indicando anche la relativa forza associativa;
-    bigrams_with_LMM = get_bigrams_with_LMM(
-        tokensTOT
+    bigrams_with_LMM = get_bigrams_with_LMM(tokensTOT)
+    topk_adj_noun_by_LMM = filter_bigrams_by_measure(
+        adj_noun_bigrams_filtered_by_tokfreq,
+        bigrams_with_LMM,
+        topk=k2,
     )
-
-    # Local Mutual Information bigrams..
+    file_analisys_info["topk_adj_noun_by_LMM"] = topk_adj_noun_by_LMM
 
     return file_analisys_info
 
@@ -375,6 +393,14 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     )
     print_info_helper(
         file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond"
+    )
+    print(
+        f"I 20 bigrammi composti da Aggettivo e Sostantivo "
+        f"(dove ogni token ha una frequenza maggiore di 3), "
+        f"con Local Mutual Information (LMM) massima, sono:"
+    )
+    print_info_helper(
+        file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM"
     )
 
 
