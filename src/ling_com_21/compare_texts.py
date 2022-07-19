@@ -112,17 +112,17 @@ def get_bigrams_with_measures(
         TOKEN_A_IDX = 0
         TOKEN_B_IDX = 1
         frequenzaBigramma = bigrams_with_frequency[bigramma]
-        probBigramma = frequenzaBigramma / len(allCorpusBigrams)
+        probBigramma = frequenzaBigramma*1.0 / len(allCorpusBigrams)*1.0
         frequenzaA = word_types_with_freq[bigramma[TOKEN_A_IDX]]
         frequenzaB = word_types_with_freq[bigramma[TOKEN_B_IDX]]
-        el_A_prob = frequenzaA / len(allCorpusTokens)
-        el_B_prob = frequenzaB / len(allCorpusTokens)
+        el_A_prob = frequenzaA*1.0 / len(allCorpusTokens)*1.0
+        el_B_prob = frequenzaB*1.0 / len(allCorpusTokens)*1.0
 
         bigram_MutualInformation = math.log2(probBigramma / (el_A_prob * el_B_prob))
         bigram_LocalMutualInformation = frequenzaBigramma * bigram_MutualInformation
         bigrams_with_LMM[bigramma] = bigram_LocalMutualInformation
 
-        probCondizionataBigramma = frequenzaBigramma / frequenzaA
+        probCondizionataBigramma = frequenzaBigramma*1.0 / frequenzaA*1.0
         bigrams_with_conditioned_probability[bigramma] = probCondizionataBigramma
 
     bigrams_with_LMM = SortDecreasing(bigrams_with_LMM)
