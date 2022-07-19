@@ -5,10 +5,11 @@ from typing import List, Tuple, Dict, Any, Optional
 
 import nltk
 
-ALL_PUNKTUATION = [".", ",", ":", "(", ")"] # "SYM" (todo: verify what symbols include)
+ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
 ADVERBS = ["RB", "RBR", "RBS", "WRB"]
 NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
+
 
 def EstraiFrasi(filepath: str) -> List[str]:
 
@@ -17,6 +18,7 @@ def EstraiFrasi(filepath: str) -> List[str]:
     sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
 
     return sent_tokenizer.tokenize(raw1)
+
 
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
@@ -29,7 +31,10 @@ def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str
         pos_tagged_tokens += pos_tagged_tokens_this_sentence
     return tokensTOT, pos_tagged_tokens
 
-def EstraiSequenzaPos(pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation=False) -> List[str]:
+
+def EstraiSequenzaPos(
+    pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation=False
+) -> List[str]:
     listaPOS: List[str] = []
     TOKEN_IDX = 0
     POS_IDX = 1
@@ -40,12 +45,16 @@ def EstraiSequenzaPos(pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuat
             listaPOS.append(pos_taggged_token[POS_IDX])
     return listaPOS
 
+
 def count_avg_tokens_per_sentence(frasi: List[str], exclude_punctuation=True):
     for frase in frasi:
         tokens = nltk.word_tokenize(frase)
         pos_tagged_tokens_this_sentence = nltk.pos_tag(tokens)
 
-def count_avg_token_lenght(pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation: bool=True):
+
+def count_avg_token_lenght(
+    pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation: bool = True
+):
     TOKEN_IDX = 0
     POS_IDX = 1
     tokens_count = 0
@@ -62,9 +71,7 @@ def count_avg_token_lenght(pos_tagged_tokens: List[Tuple[str, str]], exclude_pun
 
 
 def get_dict_frequenze(
-        mylist: List[Any],
-        sorted:bool=True,
-        topk: Optional[int]=None
+    mylist: List[Any], sorted: bool = True, topk: Optional[int] = None
 ) -> Dict[Any, int]:
 
     freqDistribution = nltk.FreqDist(mylist)
@@ -73,9 +80,10 @@ def get_dict_frequenze(
 
     return topk_elements_as_dict
 
+
 def get_bigrams_with_conditioned_probability(
-        allCorpusTokens: List[str],
-        topk: Optional[int] = None,
+    allCorpusTokens: List[str],
+    topk: Optional[int] = None,
 ) -> Dict[Tuple[str, str], float]:
     # topk_POSbigrams = get_dict_frequenze(adj_noun_bigrams_filtered, topk=k2)
 
@@ -91,22 +99,28 @@ def get_bigrams_with_conditioned_probability(
         probCondizionata = frequenzaBigramma / frequenzaA
         bigrams_with_conditioned_probability[bigramma] = probCondizionata
 
-    bigrams_with_conditioned_probability = SortDecreasing(bigrams_with_conditioned_probability)
+    bigrams_with_conditioned_probability = SortDecreasing(
+        bigrams_with_conditioned_probability
+    )
 
     if topk is not None:
-        bigrams_with_conditioned_probability = dict(list(bigrams_with_conditioned_probability.items())[0: topk])
+        bigrams_with_conditioned_probability = dict(
+            list(bigrams_with_conditioned_probability.items())[0:topk]
+        )
 
     return bigrams_with_conditioned_probability
 
 
 def filter_bigrams_by_conditioned_probability(
-        tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
-        bigrams_with_conditioned_probability: Dict[Tuple[str, str], float],
-        topk: int,
+    tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
+    bigrams_with_conditioned_probability: Dict[Tuple[str, str], float],
+    topk: int,
 ) -> Dict[Tuple[str, str], float]:
 
     TOK_IDX = 0
-    bare_bigrams_to_filter = [(x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter]
+    bare_bigrams_to_filter = [
+        (x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter
+    ]
 
     topk_bigrams_by_conditioned_probability = dict()
     for top_prob_bigram, prob in bigrams_with_conditioned_probability.items():
@@ -118,9 +132,12 @@ def filter_bigrams_by_conditioned_probability(
     return topk_bigrams_by_conditioned_probability
 
 
-def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[str, int]:
+def get_dict_frequenze_POS(
+    listaPOS: List[str], sorted=True, topk=None
+) -> Dict[str, int]:
 
     return get_dict_frequenze(listaPOS, sorted=sorted, topk=topk)
+
 
 def EstraiBigrammiPos(
     pos_tagged_tokens: List[Tuple[str, str]],
@@ -132,16 +149,19 @@ def EstraiBigrammiPos(
     bigrammiEstratti = []
     bigrammiTokPos = nltk.bigrams(pos_tagged_tokens)
     for bigramma in bigrammiTokPos:
-        if bigramma[0][POS_IDX] in wanted_POS_first and bigramma[1][POS_IDX] in wanted_POS_second:
+        if (
+            bigramma[0][POS_IDX] in wanted_POS_first
+            and bigramma[1][POS_IDX] in wanted_POS_second
+        ):
             bigrammiEstratti.append(bigramma)
 
     return bigrammiEstratti
 
 
 def filterBigramsByTokenFreq(
-        bigrammiTokPos: List[Tuple[Tuple[str, str], Tuple[str, str]]],
-        distribFreqTokens: Dict[str, int],
-        min_freq: int,
+    bigrammiTokPos: List[Tuple[Tuple[str, str], Tuple[str, str]]],
+    distribFreqTokens: Dict[str, int],
+    min_freq: int,
 ) -> List[Tuple[Tuple[str, str], Tuple[str, str]]]:
 
     filteredBigrams = []
@@ -159,8 +179,7 @@ def filterBigramsByTokenFreq(
 
 
 def get_tokens_filterd_by_POS(
-        pos_tagged_tokens: List[Tuple[str, str]],
-        wanted_POS: List[str]
+    pos_tagged_tokens: List[Tuple[str, str]], wanted_POS: List[str]
 ) -> List[str]:
 
     TOK_IDX = 0
@@ -175,11 +194,11 @@ def get_tokens_filterd_by_POS(
 
 
 def getFileAnalisysInfo(filepath: str) -> Dict:
-    with open(filepath, mode='r', encoding="utf-8") as fileInput:
+    with open(filepath, mode="r", encoding="utf-8") as fileInput:
         raw = fileInput.read()
 
     #  il numero di frasi e di token:
-    sent_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
     frasi = sent_tokenizer.tokenize(raw)
     tokensTOT = getWordTokenized(frasi)
     file_analisys_info: Dict[str, Any] = dict()
@@ -189,16 +208,24 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     # numero medio di token in una frase (escludendo la punteggiatura)
     tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
-    listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(pos_tagged_tokens, exclude_punctuation=True)
-    file_analisys_info["avg_tokens_per_sentence"] = len(listaPOS_SenzaPunteggiatura) / len (frasi)
+    listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(
+        pos_tagged_tokens, exclude_punctuation=True
+    )
+    file_analisys_info["avg_tokens_per_sentence"] = len(
+        listaPOS_SenzaPunteggiatura
+    ) / len(frasi)
 
-    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(pos_tagged_tokens, exclude_punctuation=True)
+    tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(
+        pos_tagged_tokens, exclude_punctuation=True
+    )
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
-    listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_tagged_tokens, exclude_punctuation=False)
+    listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(
+        pos_tagged_tokens, exclude_punctuation=False
+    )
     k = 10
     topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, topk=k)
     file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
@@ -221,14 +248,24 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo
     tokens_and_freqs = get_dict_frequenze(tokensTOT)
-    adj_noun_bigrams = EstraiBigrammiPos(pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS)
+    adj_noun_bigrams = EstraiBigrammiPos(
+        pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS
+    )
     # dove ogni token ha una frequenza maggiore di 3:
-    adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(adj_noun_bigrams, tokens_and_freqs, min_freq=4)
+    adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(
+        adj_noun_bigrams, tokens_and_freqs, min_freq=4
+    )
     # ◦ con frequenza massima, indicando anche la relativa frequenza;
     # TODO
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
-    bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(tokensTOT)
-    topk_adj_noun_by_cond_prob = filter_bigrams_by_conditioned_probability(adj_noun_bigrams_filtered_by_tokfreq, bigrams_with_conditioned_probability, topk=k2)
+    bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(
+        tokensTOT
+    )
+    topk_adj_noun_by_cond_prob = filter_bigrams_by_conditioned_probability(
+        adj_noun_bigrams_filtered_by_tokfreq,
+        bigrams_with_conditioned_probability,
+        topk=k2,
+    )
     file_analisys_info["topk_adj_noun_by_cond_prob"] = topk_adj_noun_by_cond_prob
 
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
@@ -248,27 +285,35 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
 
     file_analisys_info1 = getFileAnalisysInfo(filepath1)
     file_analisys_info2 = getFileAnalisysInfo(filepath2)
-    filename1 = file_analisys_info1['filename']
-    filename2 = file_analisys_info2['filename']
+    filename1 = file_analisys_info1["filename"]
+    filename2 = file_analisys_info2["filename"]
     print(f"Analisi dei due testi {filename1} e {filename2} :")
 
-    print(f"Numero di frasi: "
-          f"{file_analisys_info1['num_sentences']} ({filename1}) e "
-          f"{file_analisys_info2['num_sentences']} ({filename2}).")
+    print(
+        f"Numero di frasi: "
+        f"{file_analisys_info1['num_sentences']} ({filename1}) e "
+        f"{file_analisys_info2['num_sentences']} ({filename2})."
+    )
 
-    print(f"Numero di token totali: "
-          f"{file_analisys_info1['num_tokens']} ({filename1}) e "
-          f"{file_analisys_info2['num_tokens']} ({filename2}).")
+    print(
+        f"Numero di token totali: "
+        f"{file_analisys_info1['num_tokens']} ({filename1}) e "
+        f"{file_analisys_info2['num_tokens']} ({filename2})."
+    )
     # I due testi hanno rispettivamente 364 e 567 frasi.
     # I due testi hanno rispettivamente 10339 e 6462 token totali.
 
-    print(f"Numero medio di token in una frase (escludendo la punteggiatura): "
-          f"{file_analisys_info1['avg_tokens_per_sentence']:.2f} ({filename1}) e "
-          f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2}).")
+    print(
+        f"Numero medio di token in una frase (escludendo la punteggiatura): "
+        f"{file_analisys_info1['avg_tokens_per_sentence']:.2f} ({filename1}) e "
+        f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2})."
+    )
 
-    print(f"Numero medio dei caratteri di un token (escludendo la punteggiatura): "
-          f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
-          f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).")
+    print(
+        f"Numero medio dei caratteri di un token (escludendo la punteggiatura): "
+        f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
+        f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2})."
+    )
 
     file_infos = [file_analisys_info1, file_analisys_info2]
     print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
@@ -293,17 +338,26 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
     # todo: calcoli su POS e frequenza, bi e tri-grammi pos
-    print(f"I 20 bigrammi composti da Aggettivo e Sostantivo "
-          f"(dove ogni token ha una frequenza maggiore di 3), "
-          f"con probabilità condizionata massima, sono:")
-    print_info_helper(file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond")
+    print(
+        f"I 20 bigrammi composti da Aggettivo e Sostantivo "
+        f"(dove ogni token ha una frequenza maggiore di 3), "
+        f"con probabilità condizionata massima, sono:"
+    )
+    print_info_helper(
+        file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond"
+    )
 
 
-def print_info_helper(file_infos, elements_key:str, element_descr: str, measure="freq"):
+def print_info_helper(
+    file_infos, elements_key: str, element_descr: str, measure="freq"
+):
     for file_info in file_infos:
         print(f"{file_info['filename']}: ")
         for element_with_freq in file_info[elements_key].items():
-            print(f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}")
+            print(
+                f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}"
+            )
+
 
 def getWordTokenized(frasi):
     tokensTOT = []
@@ -316,6 +370,7 @@ def getWordTokenized(frasi):
 
 def annotate():
     pass
+
 
 def compare_two_texts():
     # Confrontate i due testi sulla base delle seguenti informazioni statistiche:
@@ -332,6 +387,7 @@ def compare_two_texts():
     # output: file di testo contenenti l'output ben formattato dei programmi.
     pass
 
+
 def extract_info_from_txts():
 
     # Per ognuno dei due corpora estraete le seguenti informazioni:
@@ -340,7 +396,7 @@ def extract_info_from_txts():
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
     # ◦ i 10 bigrammi di PoS più frequenti;
     # ◦ i 10 trigrammi di PoS più frequenti;
-    
+
     # ◦ i 20 Aggettivi e i 20 Avverbi più frequenti;
 
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
@@ -361,12 +417,13 @@ def extract_info_from_txts():
     # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
     # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
     # contiene le frasi;
-    
+
     #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
     # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
 
     # output: file di testo contenenti l'output ben formattato dei programmi.
     pass
+
 
 def main():
     if len(sys.argv) >= 3:
@@ -381,5 +438,6 @@ def main():
         filepath2=filepath2,
     )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
