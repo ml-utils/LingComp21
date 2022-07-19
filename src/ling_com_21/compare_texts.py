@@ -88,6 +88,40 @@ def get_dict_frequenze(mylist: List[Any], topk: Optional[int] = None) -> Dict[An
 
     return topk_elements_as_dict
 
+def get_trigrams_with_frequency(
+    allCorpusTokens: List[str],
+) -> Dict[Tuple[str, str, str], int]:
+    """
+
+    :param allCorpusTokens:
+    :return: A dictionary of trigrams (keys), sorted in decreasing order by their frequency (values).
+    """
+    allCorpusTrigrams: List[Tuple[str, str, str]] = list(nltk.trigrams(allCorpusTokens))
+    trigrams_with_frequency: Dict[Tuple[str, str, str], int] = dict()
+
+    uniqueTrigrams = set(allCorpusTrigrams)
+    for trigramma in uniqueTrigrams:
+        frequenzaTrigramma = allCorpusTrigrams.count(trigramma)
+        trigrams_with_frequency[trigramma] = frequenzaTrigramma
+
+    return SortDecreasing(trigrams_with_frequency)
+
+def get_trigrams_with_conditioned_probability(
+    allCorpusTokens: List[str],
+    bigrams_with_frequency: Dict[Tuple[str, str], int],
+    trigrams_with_frequency: Dict[Tuple[str, str, str], int],
+) -> Dict[Tuple[str, str, str], float]:  # trigrams_with_conditioned_probability
+
+    allCorpusTrigrams: List[Tuple[str, str, str]] = list(nltk.trigrams(allCorpusTokens))
+    trigrams_with_conditioned_probability = dict()
+
+    uniqueTrigrams = set(allCorpusTrigrams)
+    for trigramma in uniqueTrigrams:
+        bigramma = tuple((trigramma[0], trigramma[1]))
+        frequenzaBigramma = bigrams_with_frequency[bigramma]
+        frequenzaTrigramma = trigrams_with_frequency[trigramma]
+        probCondizionataBigramma = frequenzaTrigramma * 1.0 / frequenzaBigramma * 1.0
+        trigrams_with_conditioned_probability[trigramma] = probCondizionataBigramma
 
 def get_bigrams_with_measures(
     allCorpusTokens: List[str],
@@ -133,13 +167,16 @@ def get_bigrams_with_measures(
     return bigrams_with_LMM, bigrams_with_conditioned_probability
 
 
+
+
+
 def get_bigrams_with_frequency(
     allCorpusTokens: List[str],
 ) -> Dict[Tuple[str, str], int]:
     """
 
     :param allCorpusTokens:
-    :return: A dictionary of bigrams, sorted in decreasing order by their frequency.
+    :return: A dictionary of bigrams (keys), sorted in decreasing order by their frequency (values).
     """
     allCorpusBigrams: List[Tuple[str, str]] = list(nltk.bigrams(allCorpusTokens))
     bigrams_with_frequency: Dict[Tuple[str, str], int] = dict()
@@ -401,6 +438,19 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
         selected_NE_list, tokens_and_freqs, topk=k3
     )
 
+    trigrams_with_frequency = get_trigrams_with_frequency(tokensTOT)
+    trigrams_with_conditioned_probability = get_trigrams_with_conditioned_probability(
+        tokensTOT,
+        bigrams_with_frequency,
+        trigrams_with_frequency,
+    )
+    # get_sentence_prob_markov2(
+    #     sentence_tokens,
+    #     tokens_and_freqs,
+    #     bigrams_with_conditioned_probability,
+    #     trigrams_with_conditioned_probability,
+    # )
+
     return file_analisys_info
 
 
@@ -449,6 +499,34 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+
+def get_sentence_prob_markov2(
+        sentence_tokens,
+        tokens_and_freqs,
+        tokens_count: int,
+        bigrams_with_conditioned_probability,
+        trigrams_with_conditioned_probability,
+):
+    sentence_prob = 1.0
+
+    first_token: str = sentence_tokens[0]
+    first_token_prob = tokens_and_freqs[first_token] / tokens_count
+    sentence_prob *= first_token_prob
+    if len(sentence_tokens) == 1:
+        return sentence_prob
+
+    first_bigram = tuple((sentence_tokens[0], sentence_tokens[1]))
+    first_bigram_prob = bigrams_with_conditioned_probability[first_bigram]
+    sentence_prob *= first_bigram_prob
+    if len(sentence_tokens) == 2:
+        return sentence_prob
+
+    sentence_trigrams = nltk.trigrams(sentence_tokens)
+    for trigram in sentence_trigrams:
+        trigram_prob = trigrams_with_conditioned_probability[trigram]
+        sentence_prob *= trigram_prob
+
+    return sentence_prob
 
 
 def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
