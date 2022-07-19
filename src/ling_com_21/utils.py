@@ -1,9 +1,11 @@
 # Penn Tree Bank tagset lists
 import math
+import os
 from itertools import islice
 from typing import Dict, List, Tuple, Any, Optional, Union
 
 import nltk  # type: ignore
+
 
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
@@ -490,3 +492,49 @@ def get_percentage_of_word_classes(pos_tagged_tokens, word_classes: List[str]):
             tokens_count += 1
 
     return tokens_count / len(pos_tagged_tokens)
+
+
+def analize_files_and_print_results(
+        filepath1: str,
+        filepath2: str,
+        extraction_function,
+        output_function):
+    print(f"Caricamento dei file {filepath1} e {filepath2}")
+
+    file_analisys_info1 = getFileAnalisysInfo(filepath1, extraction_function)
+    file_analisys_info2 = getFileAnalisysInfo(filepath2, extraction_function)
+    filename1 = file_analisys_info1["filename"]
+    filename2 = file_analisys_info2["filename"]
+    print(f"Analisi dei due testi {filename1} e {filename2} :")
+
+    output_function(file_analisys_info1, file_analisys_info2)
+
+    # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
+
+
+def getFileAnalisysInfo(filepath: str, extraction_function) -> Dict:
+    with open(filepath, mode="r", encoding="utf-8") as fileInput:
+        raw = fileInput.read()
+
+    #  il numero di frasi e di token:
+    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
+    frasi: List[str] = sent_tokenizer.tokenize(raw)
+    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
+
+    file_analisys_info: Dict[str, Any] = dict()
+    file_analisys_info["filename"] = os.path.basename(filepath)
+
+    extraction_function(file_analisys_info, frasi, tokensTOT, pos_tagged_tokens)
+
+    return file_analisys_info
+
+
+def print_info_helper(
+    file_infos, elements_key: str, element_descr: str, measure="freq"
+):
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        for element_with_freq in file_info[elements_key].items():
+            print(
+                f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}"
+            )
