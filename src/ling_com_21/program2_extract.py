@@ -3,15 +3,31 @@ from typing import Dict, Any
 
 import nltk  # type: ignore
 
-from utils import EstraiSequenzaPos, get_dict_frequenze, \
-    get_tokens_filterd_by_POS, ADJECTIVES, ADVERBS, EstraiBigrammiPos, NOUNS, \
-    filterBigramsByTokenFreq, get_bigrams_with_frequency, \
-    filter_bigrams_by_measure, get_bigrams_with_measures, get_all_NEs, \
-    filter_NE, PROPER_NOUNS, PERSON_NE_CLASS, filter_NE_by_measure, \
-    filter_sentences, get_sentences_with_average_token_freq, \
-    get_trigrams_with_frequency, get_trigrams_with_conditioned_probability, \
-    get_sentences_with_markov2_probs, print_info_helper, \
-    analize_files_and_print_results
+from utils import (
+    EstraiSequenzaPos,
+    get_dict_frequenze,
+    get_tokens_filterd_by_POS,
+    ADJECTIVES,
+    ADVERBS,
+    EstraiBigrammiPos,
+    NOUNS,
+    filterBigramsByTokenFreq,
+    get_bigrams_with_frequency,
+    filter_bigrams_by_measure,
+    get_bigrams_with_measures,
+    get_all_NEs,
+    filter_NE,
+    PROPER_NOUNS,
+    PERSON_NE_CLASS,
+    filter_NE_by_measure,
+    filter_sentences,
+    get_sentences_with_average_token_freq,
+    get_trigrams_with_frequency,
+    get_trigrams_with_conditioned_probability,
+    get_sentences_with_markov2_probs,
+    print_info_helper,
+    analize_files_and_print_results,
+)
 
 
 def program2_extract_info(
@@ -246,6 +262,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
     )
     print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure="freq")
+
 
 def main():
     if len(sys.argv) >= 3:

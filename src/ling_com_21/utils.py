@@ -20,11 +20,11 @@ CONJUNCTIONS = ["CC"]
 OTHER_FUNCTIONAL = [
     "EX",  # Existential there
     "MD",  # Modal
-    "PDT", # Predeterminer
-    "POS", # possessive ending
-    "RP", # particle
-    "TO", # to
-    "UH", # interjection
+    "PDT",  # Predeterminer
+    "POS",  # possessive ending
+    "RP",  # particle
+    "TO",  # to
+    "UH",  # interjection
 ]
 PRONOUNS = ["PRP", "PRP$", "WP", "WP$"]
 FUNCTIONAL_WORDS = ARTICLES + PREPOSITIONS + CONJUNCTIONS + PRONOUNS + OTHER_FUNCTIONAL
@@ -495,10 +495,8 @@ def get_percentage_of_word_classes(pos_tagged_tokens, word_classes: List[str]):
 
 
 def analize_files_and_print_results(
-        filepath1: str,
-        filepath2: str,
-        extraction_function,
-        output_function):
+    filepath1: str, filepath2: str, extraction_function, output_function
+):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
 
     file_analisys_info1 = getFileAnalisysInfo(filepath1, extraction_function)

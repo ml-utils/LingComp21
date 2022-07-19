@@ -1,10 +1,16 @@
 import sys
 from typing import Dict, Any
 
-from utils import EstraiSequenzaPos, count_avg_token_lenght, \
-    get_hapax_count, get_incremental_vocab_info, \
-    get_percentage_of_word_classes, CONTENT_WORDS, FUNCTIONAL_WORDS, \
-    analize_files_and_print_results
+from utils import (
+    EstraiSequenzaPos,
+    count_avg_token_lenght,
+    get_hapax_count,
+    get_incremental_vocab_info,
+    get_percentage_of_word_classes,
+    CONTENT_WORDS,
+    FUNCTIONAL_WORDS,
+    analize_files_and_print_results,
+)
 
 
 def program1_compare(
@@ -31,13 +37,19 @@ def program1_compare(
     )
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
-    file_analisys_info["num_hapax_first_1000_tokens"] = get_hapax_count(tokensTOT, tokens_limit=1000)
-    file_analisys_info["incremental_vocab_info"] = get_incremental_vocab_info(tokensTOT, corpus_lenght_increments=500)
+    file_analisys_info["num_hapax_first_1000_tokens"] = get_hapax_count(
+        tokensTOT, tokens_limit=1000
+    )
+    file_analisys_info["incremental_vocab_info"] = get_incremental_vocab_info(
+        tokensTOT, corpus_lenght_increments=500
+    )
 
-    file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(pos_tagged_tokens,
-                                                                              CONTENT_WORDS)
-    file_analisys_info["perc_functional_words"] = get_percentage_of_word_classes(pos_tagged_tokens,
-                                                                                 FUNCTIONAL_WORDS)
+    file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(
+        pos_tagged_tokens, CONTENT_WORDS
+    )
+    file_analisys_info["perc_functional_words"] = get_percentage_of_word_classes(
+        pos_tagged_tokens, FUNCTIONAL_WORDS
+    )
 
 
 def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
@@ -77,13 +89,19 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         f"{file_analisys_info2['num_hapax_first_1000_tokens']} ({filename2})."
     )
 
-    print(f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):")
+    print(
+        f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):"
+    )
     for file_analisys_info in [file_analisys_info1, file_analisys_info2]:
         print(f"{filename1} :")
         for corpus_limit in file_analisys_info["incremental_vocab_info"]:
-            vocab_size = file_analisys_info["incremental_vocab_info"][corpus_limit]["vocab_size"]
+            vocab_size = file_analisys_info["incremental_vocab_info"][corpus_limit][
+                "vocab_size"
+            ]
             TTR = file_analisys_info["incremental_vocab_info"][corpus_limit]["TTR"]
-            print(f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}")
+            print(
+                f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}"
+            )
 
     print(
         f"Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : "
@@ -95,6 +113,7 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         f"{file_analisys_info1['perc_functional_words']:.2%} ({filename1}) e "
         f"{file_analisys_info2['perc_functional_words']:.2%} ({filename2})."
     )
+
 
 def main():
     if len(sys.argv) >= 3:
