@@ -14,6 +14,7 @@ NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
 PROPER_NOUNS = ["NNP", "NNPS"]
 PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
+
 def EstraiFrasi(filepath: str) -> List[str]:
 
     with open(filepath, mode="r", encoding="utf-8") as fileInput1:
@@ -150,6 +151,7 @@ def get_bigrams_with_frequency(
 
     return SortDecreasing(bigrams_with_frequency)
 
+
 def filter_NE_by_measure(
     selected_NE_list,
     tokens_and_freqs,  # check that this is sorted in decreasing order
@@ -161,15 +163,17 @@ def filter_NE_by_measure(
         freq = tokens_and_freqs[unique_selected_NE]
         unique_selected_NEs_with_freq[unique_selected_NE] = freq
 
-    top_el = dict(list(islice(SortDecreasing(unique_selected_NEs_with_freq).items(), topk)))
+    top_el = dict(
+        list(islice(SortDecreasing(unique_selected_NEs_with_freq).items(), topk))
+    )
 
     return top_el
+
 
 def filter_bigrams_by_measure(
     tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
     bigrams_with_measure: Union[
-        Dict[Tuple[str, str], float],
-        Dict[Tuple[str, str], int]
+        Dict[Tuple[str, str], float], Dict[Tuple[str, str], int]
     ],
     topk: int,
 ) -> Dict[Tuple[str, str], float]:
@@ -276,7 +280,7 @@ def get_all_NEs(
     TOK_IDX = 0
     POS_IDX = 1
     for node in ne_chunk:
-        is_intermediate_node = hasattr(node, 'label')
+        is_intermediate_node = hasattr(node, "label")
         if is_intermediate_node:
             if node.label() in ["PERSON", "GPE", "ORGANIZATION"]:
                 for leaf in node.leaves():
@@ -387,9 +391,15 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     file_analisys_info["topk_adj_noun_by_LMM"] = topk_adj_noun_by_LMM
 
     NE_by_class_and_POS = get_all_NEs(pos_tagged_tokens)
-    selected_NE_list = filter_NE(NE_by_class_and_POS, wanted_POSes = PROPER_NOUNS, wanted_NE_classes = [PERSON_NE_CLASS])
+    selected_NE_list = filter_NE(
+        NE_by_class_and_POS,
+        wanted_POSes=PROPER_NOUNS,
+        wanted_NE_classes=[PERSON_NE_CLASS],
+    )
     k3 = 15
-    file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(selected_NE_list, tokens_and_freqs, topk=k3)
+    file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(
+        selected_NE_list, tokens_and_freqs, topk=k3
+    )
 
     return file_analisys_info
 
@@ -497,7 +507,7 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     print(
         f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
     )
-    print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure = "freq")
+    print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure="freq")
 
 
 def analize_files_and_print_results(filepath1: str, filepath2: str):
