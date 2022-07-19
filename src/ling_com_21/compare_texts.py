@@ -2,6 +2,7 @@
 import math
 import os
 import sys
+from itertools import islice
 from typing import List, Tuple, Dict, Any, Optional, Union
 
 import nltk
@@ -10,7 +11,8 @@ ALL_PUNKTUATION = [".", ",", ":", "(", ")"]  # "SYM" (todo: verify what symbols 
 ADJECTIVES = ["JJ", "JJR", "JJS"]
 ADVERBS = ["RB", "RBR", "RBS", "WRB"]
 NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
-
+PROPER_NOUNS = ["NNP", "NNPS"]
+PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
 def EstraiFrasi(filepath: str) -> List[str]:
 
@@ -148,6 +150,20 @@ def get_bigrams_with_frequency(
 
     return SortDecreasing(bigrams_with_frequency)
 
+def filter_NE_by_measure(
+    selected_NE_list,
+    tokens_and_freqs,  # check that this is sorted in decreasing order
+    topk: int,
+):
+    unique_selected_NEs = set(selected_NE_list)
+    unique_selected_NEs_with_freq = dict()
+    for unique_selected_NE in unique_selected_NEs:
+        freq = tokens_and_freqs[unique_selected_NE]
+        unique_selected_NEs_with_freq[unique_selected_NE] = freq
+
+    top_el = dict(list(islice(SortDecreasing(unique_selected_NEs_with_freq).items(), topk)))
+
+    return top_el
 
 def filter_bigrams_by_measure(
     tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
@@ -331,6 +347,11 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     )
     file_analisys_info["topk_adj_noun_by_LMM"] = topk_adj_noun_by_LMM
 
+    NE_by_class_and_POS = get_all_NEs(pos_tagged_tokens)
+    selected_NE_list = filter_NE(NE_by_class_and_POS, wanted_POSes = PROPER_NOUNS, wanted_NE_classes = [PERSON_NE_CLASS])
+    k3 = 15
+    file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(selected_NE_list, tokens_and_freqs, topk=k3)
+
     return file_analisys_info
 
 
@@ -432,22 +453,52 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
     # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
     # contiene le frasi;
 
-    #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
-    # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
+    #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo,
+    # estraete:
+    print(
+        f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
+    )
+    print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure = "freq")
 
-def get_NE(
-        tokens,
-        tokensPOS,
-):
-    ne_chunk = nltk.ne_chunk(tokensPOS)
+
+def filter_NE(
+    NEs: Dict[Tuple[str, str], List[str]],
+    wanted_POSes: List[str] = PROPER_NOUNS,
+    wanted_NE_classes: List[str] = [PERSON_NE_CLASS],
+) -> List[str]:
+
     named_entity_list = []
+    for wanted_NE_class in wanted_NE_classes:
+        for wanted_POS in wanted_POSes:
+            key: Tuple[str, str] = tuple((wanted_NE_class, wanted_POS))
+            if key in NEs:
+                named_entity_list += NEs[key]
+
+    return named_entity_list
+
+
+def get_all_NEs(
+    tokensPOS: List[Tuple[str, str]],
+) -> Dict[Tuple[str, str], List[str]]:
+
+    # individuato e classificato le Entità Nominate (NE) presenti nel testo
+
+    NE_by_class_and_POS: Dict[Tuple[str, str], List[str]] = dict()
+    ne_chunk = nltk.ne_chunk(tokensPOS)
+    TOK_IDX = 0
+    POS_IDX = 1
     for node in ne_chunk:
         is_intermediate_node = hasattr(node, 'label')
         if is_intermediate_node:
-            if node.label() in ["PERSON"]:  # , "GPE", "ORGANIZATION"
-                for leaf in node.leaves:
-                    print(leaf)
-                    named_entity_list.append(leaf)
+            if node.label() in ["PERSON", "GPE", "ORGANIZATION"]:
+                for leaf in node.leaves():
+                    key: Tuple[str, str] = tuple((node.label(), leaf[POS_IDX]))
+                    if key not in NE_by_class_and_POS:
+                        NE_by_class_and_POS[key] = []
+                    NE_by_class_and_POS[key].append(leaf[TOK_IDX])
+
+    return NE_by_class_and_POS
+
 
 def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
