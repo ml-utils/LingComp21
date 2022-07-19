@@ -720,22 +720,6 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         max_mkv2_prob_sentence = file_info["max_mkv2_prob_sentence"]
         print(f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}")
 
-    # TODO:
-    #  estraete le frasi con almeno 6 token e più corta di 25 token,
-    # dove ogni singolo token occorre almeno due volte nel corpus di riferimento:
-
-    # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
-    # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
-    # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
-    # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
-    # e dividendo la somma delle frequenze per il numero di token della frase stessa;
-
-    # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
-    # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
-    # contiene le frasi;
-
-    #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo,
-    # estraete:
     print(
         f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
     )
