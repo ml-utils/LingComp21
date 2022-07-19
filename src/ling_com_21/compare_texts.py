@@ -339,15 +339,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 def SortDecreasing(sort_me: Dict) -> Dict:
     return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
 
+def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
-def analize_files_and_print_results(filepath1: str, filepath2: str):
-    print(f"Caricamento dei file {filepath1} e {filepath2}")
-
-    file_analisys_info1 = getFileAnalisysInfo(filepath1)
-    file_analisys_info2 = getFileAnalisysInfo(filepath2)
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
-    print(f"Analisi dei due testi {filename1} e {filename2} :")
 
     print(
         f"Numero di frasi: "
@@ -375,6 +370,20 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
         f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2})."
     )
 
+    # TODO:
+    #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
+
+    #  la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
+    # Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
+    # di 500 token;
+    # (già fatto come esercizio)
+
+    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
+    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+
+
+def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
+
     file_infos = [file_analisys_info1, file_analisys_info2]
     print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
     print_info_helper(file_infos, "most_frequent_POS", "POS")
@@ -387,19 +396,6 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"I 20 avverbi più frequenti sono:")
     print_info_helper(file_infos, "most_frequent_adverbs", "Adv")
 
-    #  il numero di hapax sui primi 1000 token; (già fatto come esercizio)
-
-    #  la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
-    # Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
-    # di 500 token;
-    # (già fatto come esercizio)
-
-    # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
-    #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
-
-    # todo: calcoli su POS e frequenza, bi e tri-grammi pos
-
-    # ◦ con frequenza massima, indicando anche la relativa frequenza;
     print(
         f"I 20 bigrammi composti da Aggettivo e Sostantivo "
         f"(dove ogni token ha una frequenza maggiore di 3), "
@@ -427,6 +423,35 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
         file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM"
     )
 
+    # TODO:
+    #  estraete le frasi con almeno 6 token e più corta di 25 token, dove ogni singolo token occorre
+    # almeno due volte nel corpus di riferimento:
+    # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
+    # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
+    # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
+    # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
+    # e dividendo la somma delle frequenze per il numero di token della frase stessa;
+
+    # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
+    # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
+    # contiene le frasi;
+
+    #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
+    # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
+
+def analize_files_and_print_results(filepath1: str, filepath2: str):
+    print(f"Caricamento dei file {filepath1} e {filepath2}")
+
+    file_analisys_info1 = getFileAnalisysInfo(filepath1)
+    file_analisys_info2 = getFileAnalisysInfo(filepath2)
+    filename1 = file_analisys_info1["filename"]
+    filename2 = file_analisys_info2["filename"]
+    print(f"Analisi dei due testi {filename1} e {filename2} :")
+
+    print_results_helper_pt1(file_analisys_info1, file_analisys_info2)
+    print_results_helper_pt2(file_analisys_info1, file_analisys_info2)
+
+    # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
 
 def print_info_helper(
     file_infos, elements_key: str, element_descr: str, measure="freq"
@@ -446,63 +471,6 @@ def getWordTokenized(frasi):
         tokens = nltk.word_tokenize(frase)
         tokensTOT += tokens
     return tokensTOT
-
-
-def annotate():
-    pass
-
-
-def compare_two_texts():
-    # Confrontate i due testi sulla base delle seguenti informazioni statistiche:
-    #  il numero di frasi e di token;
-    #  la lunghezza media delle frasi in termini di token e dei token (escludendo la punteggiatura)
-    # in termini di caratteri;
-    #  il numero di hapax sui primi 1000 token;
-    #  la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
-    # Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
-    # di 500 token;
-    #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
-    # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
-
-    # output: file di testo contenenti l'output ben formattato dei programmi.
-    pass
-
-
-def extract_info_from_txts():
-
-    # Per ognuno dei due corpora estraete le seguenti informazioni:
-    #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
-    # frequenza:
-    # ◦ le 10 PoS (Part-of-Speech) più frequenti;
-    # ◦ i 10 bigrammi di PoS più frequenti;
-    # ◦ i 10 trigrammi di PoS più frequenti;
-
-    # ◦ i 20 Aggettivi e i 20 Avverbi più frequenti;
-
-    #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
-    # una frequenza maggiore di 3:
-    # ◦ con frequenza massima, indicando anche la relativa frequenza;
-    # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
-    # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
-    # indicando anche la relativa forza associativa;
-
-    #  estraete le frasi con almeno 6 token e più corta di 25 token, dove ogni singolo token occorre
-    # almeno due volte nel corpus di riferimento:
-    # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
-    # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
-    # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
-    # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
-    # e dividendo la somma delle frequenze per il numero di token della frase stessa;
-
-    # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
-    # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
-    # contiene le frasi;
-
-    #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
-    # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
-
-    # output: file di testo contenenti l'output ben formattato dei programmi.
-    pass
 
 
 def main():
