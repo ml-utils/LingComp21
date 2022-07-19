@@ -100,7 +100,7 @@ def get_bigrams_with_conditioned_probability(
 
 
 def filter_bigrams_by_conditioned_probability(
-        tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str]]],  # example:
+        tokpos_bigrams_to_filter: List[Tuple[Tuple[str, str], Tuple[str, str]]],  # example:
         bigrams_with_conditioned_probability: Dict[Tuple[str, str], float],
         topk: int,
 ) -> Dict[Tuple[str, str], float]:
@@ -126,7 +126,7 @@ def EstraiBigrammiPos(
     pos_tagged_tokens: List[Tuple[str, str]],
     wanted_POS_first: List[str],
     wanted_POS_second: List[str],
-) -> List[Tuple[Tuple[str, str]]]:
+) -> List[Tuple[Tuple[str, str], Tuple[str, str]]]:
     POS_IDX = 1
 
     bigrammiEstratti = []
@@ -139,10 +139,10 @@ def EstraiBigrammiPos(
 
 
 def filterBigramsByTokenFreq(
-        bigrammiTokPos: List[Tuple[Tuple[str, str]]],
+        bigrammiTokPos: List[Tuple[Tuple[str, str], Tuple[str, str]]],
         distribFreqTokens: Dict[str, int],
         min_freq: int,
-) -> List[Tuple[Tuple[str, str]]]:
+) -> List[Tuple[Tuple[str, str], Tuple[str, str]]]:
 
     filteredBigrams = []
     for bigrammaTokPos in bigrammiTokPos:
@@ -238,8 +238,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     return file_analisys_info
 
+
 def SortDecreasing(sort_me: Dict) -> Dict:
     return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
+
 
 def analize_files_and_print_results(filepath1: str, filepath2: str):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
