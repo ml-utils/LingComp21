@@ -85,10 +85,10 @@ def get_tokens_filterd_by_POS(
     TOK_IDX = 0
     POS_IDX = 1
 
-    POS_list = []
+    POS_list: List[str] = []
     for pos_tagged_token in pos_tagged_tokens:
         if pos_tagged_token[POS_IDX] in wanted_POS:
-            POS_list += pos_tagged_token[TOK_IDX]
+            POS_list.append(pos_tagged_token[TOK_IDX])
 
     return POS_list
 
