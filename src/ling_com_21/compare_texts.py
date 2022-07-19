@@ -476,18 +476,13 @@ def get_sentence_prob_markov2(
 
     return sentence_prob
 
+def program1_compare(
+    file_analisys_info: Dict[str, Any],
+    frasi,
+    tokensTOT,
+    pos_tagged_tokens,
+):
 
-def getFileAnalisysInfo(filepath: str) -> Dict:
-    with open(filepath, mode="r", encoding="utf-8") as fileInput:
-        raw = fileInput.read()
-
-    #  il numero di frasi e di token:
-    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
-    frasi: List[str] = sent_tokenizer.tokenize(raw)
-    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
-
-    file_analisys_info: Dict[str, Any] = dict()
-    file_analisys_info["filename"] = os.path.basename(filepath)
     file_analisys_info["num_sentences"] = len(frasi)
     file_analisys_info["num_tokens"] = len(tokensTOT)
 
@@ -512,6 +507,12 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
+def program2_extract_info(
+    file_analisys_info: Dict[str, Any],
+    frasi,
+    tokensTOT,
+    pos_tagged_tokens,
+):
 
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
@@ -664,6 +665,22 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     prob_of_top_sentence_for_prob = sentences_with_markov2_probs[top_sentence_for_prob]
     max_mkv2_prob_sentence = (top_sentence_for_prob, prob_of_top_sentence_for_prob)
     file_analisys_info["max_mkv2_prob_sentence"] = max_mkv2_prob_sentence
+
+
+def getFileAnalisysInfo(filepath: str) -> Dict:
+    with open(filepath, mode="r", encoding="utf-8") as fileInput:
+        raw = fileInput.read()
+
+    #  il numero di frasi e di token:
+    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
+    frasi: List[str] = sent_tokenizer.tokenize(raw)
+    tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
+
+    file_analisys_info: Dict[str, Any] = dict()
+    file_analisys_info["filename"] = os.path.basename(filepath)
+
+    program1_compare(file_analisys_info, frasi, tokensTOT, pos_tagged_tokens)
+    program2_extract_info(file_analisys_info, frasi, tokensTOT, pos_tagged_tokens)
 
     return file_analisys_info
 
