@@ -321,6 +321,79 @@ def get_all_NEs(
 
     return NE_by_class_and_POS
 
+def filter_sentences(
+    sentences: List[str],
+    words_and_freqs: Dict[str, int],
+    min_lenght: int,
+    max_lenght: int,
+    min_token_freq: int,
+):
+    filtered_sentences = []
+    for sentence in sentences:
+        sentence_tokens = nltk.word_tokenize(sentence)
+        sentence_lenght = len(sentence_tokens)
+        if min_lenght <= sentence_lenght <= max_lenght:
+            all_tokens_frequent_enough = True
+            for token in sentence_tokens:
+                if words_and_freqs[token] < min_token_freq:
+                    all_tokens_frequent_enough = False
+            if all_tokens_frequent_enough:
+                filtered_sentences.append(sentence)
+
+    return filtered_sentences
+
+
+def get_sentences_with_markov2_probs(
+    sentences: List[str],
+    tokens_and_freqs: Dict[str, int],
+    tokens_count: int,
+    bigrams_with_conditioned_probability,
+    trigrams_with_conditioned_probability,
+):
+
+    sentences_with_markov2_probs: Dict[str, float] = dict()
+    for sentence in sentences:
+        sentence_tokens = nltk.word_tokenize(sentence)
+        sentence_prob = get_sentence_prob_markov2(
+            sentence_tokens,
+            tokens_and_freqs,
+            tokens_count,
+            bigrams_with_conditioned_probability,
+            trigrams_with_conditioned_probability,
+        )
+        sentences_with_markov2_probs[sentence] = sentence_prob
+
+    return SortDecreasing(sentences_with_markov2_probs)
+
+
+def get_sentence_prob_markov2(
+    sentence_tokens,
+    tokens_and_freqs,
+    tokens_count: int,
+    bigrams_with_conditioned_probability,
+    trigrams_with_conditioned_probability,
+):
+    sentence_prob = 1.0
+
+    first_token: str = sentence_tokens[0]
+    first_token_prob = tokens_and_freqs[first_token] / tokens_count
+    sentence_prob *= first_token_prob
+    if len(sentence_tokens) == 1:
+        return sentence_prob
+
+    first_bigram = (sentence_tokens[0], sentence_tokens[1])
+    first_bigram_prob = bigrams_with_conditioned_probability[first_bigram]
+    sentence_prob *= first_bigram_prob
+    if len(sentence_tokens) == 2:
+        return sentence_prob
+
+    sentence_trigrams = nltk.trigrams(sentence_tokens)
+    for trigram in sentence_trigrams:
+        trigram_prob = trigrams_with_conditioned_probability[trigram]
+        sentence_prob *= trigram_prob
+
+    return sentence_prob
+
 
 def getFileAnalisysInfo(filepath: str) -> Dict:
     with open(filepath, mode="r", encoding="utf-8") as fileInput:
@@ -519,80 +592,6 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
-
-
-def filter_sentences(
-    sentences: List[str],
-    words_and_freqs: Dict[str, int],
-    min_lenght: int,
-    max_lenght: int,
-    min_token_freq: int,
-):
-    filtered_sentences = []
-    for sentence in sentences:
-        sentence_tokens = nltk.word_tokenize(sentence)
-        sentence_lenght = len(sentence_tokens)
-        if min_lenght <= sentence_lenght <= max_lenght:
-            all_tokens_frequent_enough = True
-            for token in sentence_tokens:
-                if words_and_freqs[token] < min_token_freq:
-                    all_tokens_frequent_enough = False
-            if all_tokens_frequent_enough:
-                filtered_sentences.append(sentence)
-
-    return filtered_sentences
-
-
-def get_sentences_with_markov2_probs(
-    sentences: List[str],
-    tokens_and_freqs: Dict[str, int],
-    tokens_count: int,
-    bigrams_with_conditioned_probability,
-    trigrams_with_conditioned_probability,
-):
-
-    sentences_with_markov2_probs: Dict[str, float] = dict()
-    for sentence in sentences:
-        sentence_tokens = nltk.word_tokenize(sentence)
-        sentence_prob = get_sentence_prob_markov2(
-            sentence_tokens,
-            tokens_and_freqs,
-            tokens_count,
-            bigrams_with_conditioned_probability,
-            trigrams_with_conditioned_probability,
-        )
-        sentences_with_markov2_probs[sentence] = sentence_prob
-
-    return SortDecreasing(sentences_with_markov2_probs)
-
-
-def get_sentence_prob_markov2(
-    sentence_tokens,
-    tokens_and_freqs,
-    tokens_count: int,
-    bigrams_with_conditioned_probability,
-    trigrams_with_conditioned_probability,
-):
-    sentence_prob = 1.0
-
-    first_token: str = sentence_tokens[0]
-    first_token_prob = tokens_and_freqs[first_token] / tokens_count
-    sentence_prob *= first_token_prob
-    if len(sentence_tokens) == 1:
-        return sentence_prob
-
-    first_bigram = (sentence_tokens[0], sentence_tokens[1])
-    first_bigram_prob = bigrams_with_conditioned_probability[first_bigram]
-    sentence_prob *= first_bigram_prob
-    if len(sentence_tokens) == 2:
-        return sentence_prob
-
-    sentence_trigrams = nltk.trigrams(sentence_tokens)
-    for trigram in sentence_trigrams:
-        trigram_prob = trigrams_with_conditioned_probability[trigram]
-        sentence_prob *= trigram_prob
-
-    return sentence_prob
 
 
 def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
