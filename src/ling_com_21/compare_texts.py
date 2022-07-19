@@ -8,6 +8,7 @@ import nltk
 ALL_PUNKTUATION = [".", ",", ":", "(", ")"] # "SYM" (todo: verify what symbols include)
 ADJECTIVES = ["JJ", "JJR", "JJS"]
 ADVERBS = ["RB", "RBR", "RBS", "WRB"]
+NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
 
 def EstraiFrasi(filepath: str) -> List[str]:
 
@@ -77,6 +78,41 @@ def get_dict_frequenze_POS(listaPOS: List[str], sorted=True, topk=None) -> Dict[
 
     return get_dict_frequenze(listaPOS, sorted=sorted, topk=topk)
 
+def EstraiBigrammiPos(
+    pos_tagged_tokens: List[Tuple[str, str]],
+    wanted_POS_first: List[str],
+    wanted_POS_second: List[str],
+) -> List[Tuple[Tuple[str, str]]]:
+    POS_IDX = 1
+
+    bigrammiEstratti = []
+    bigrammiTokPos = nltk.bigrams(pos_tagged_tokens)
+    for bigramma in bigrammiTokPos:
+        if bigramma[0][POS_IDX] in wanted_POS_first and bigramma[1][POS_IDX] in wanted_POS_second:
+            bigrammiEstratti.append(bigramma)
+
+    return bigrammiEstratti
+
+
+def filterBigramsByTokenFreq(
+        bigrammiTokPos: List[Tuple[Tuple[str, str]]],
+        distribFreqTokens: Dict[str, int],
+        min_freq: int,
+) -> List[Tuple[Tuple[str, str]]]:
+
+    filteredBigrams = []
+    for bigrammaTokPos in bigrammiTokPos:
+
+        allTokensHaveEnounghFreq = True
+        for tokPos in bigrammaTokPos:
+            tok = tokPos[0]
+            if distribFreqTokens[tok] < min_freq:
+                allTokensHaveEnounghFreq = False
+        if allTokensHaveEnounghFreq:
+            filteredBigrams.append(bigrammaTokPos)
+
+    return filteredBigrams
+
 
 def get_tokens_filterd_by_POS(
         pos_tagged_tokens: List[Tuple[str, str]],
@@ -120,24 +156,39 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
     listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(pos_tagged_tokens, exclude_punctuation=False)
     k = 10
-    topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, sorted=True, topk=k)
+    topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, topk=k)
     file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
     POSbigrams = nltk.bigrams(listaPOS_inclusaPunteggiatura)
-    topk_POSbigrams = get_dict_frequenze(list(POSbigrams), sorted=True, topk=k)
+    topk_POSbigrams = get_dict_frequenze(list(POSbigrams), topk=k)
     file_analisys_info["most_frequent_POS_bigrams"] = topk_POSbigrams
     # i 10 trigrammi di PoS più frequenti;
     POStrigrams = nltk.trigrams(listaPOS_inclusaPunteggiatura)
-    topk_POStrigrams = get_dict_frequenze(list(POStrigrams), sorted=True, topk=k)
+    topk_POStrigrams = get_dict_frequenze(list(POStrigrams), topk=k)
     file_analisys_info["most_frequent_POS_trigrams"] = topk_POStrigrams
 
     k2 = 20
     adjectives = get_tokens_filterd_by_POS(pos_tagged_tokens, ADJECTIVES)
-    topk_adjectives = get_dict_frequenze(list(adjectives), sorted=True, topk=k2)
+    topk_adjectives = get_dict_frequenze(list(adjectives), topk=k2)
     file_analisys_info["most_frequent_adjectives"] = topk_adjectives
 
     adverbs = get_tokens_filterd_by_POS(pos_tagged_tokens, ADVERBS)
     topk_adverbs = get_dict_frequenze(list(adverbs), sorted=True, topk=k2)
     file_analisys_info["most_frequent_adverbs"] = topk_adverbs
+
+    #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
+    # una frequenza maggiore di 3:
+    # ◦ con frequenza massima, indicando anche la relativa frequenza;
+    # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
+    # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
+    # indicando anche la relativa forza associativa;
+    tokens_and_freqs = get_dict_frequenze(tokensTOT)
+    adj_noun_bigrams = EstraiBigrammiPos(pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS)
+    # dove ogni token ha una frequenza maggiore di 3:
+
+    adj_noun_bigrams_filtered = filterBigramsByTokenFreq(adj_noun_bigrams, tokens_and_freqs, min_freq=4)
+    print(f"adj_noun_bigrams_filtered={adj_noun_bigrams_filtered[:10]}")
+    # probabilità condizionata bigrams ..
+    # Local Mutual Information bigrams..
 
     return file_analisys_info
 
@@ -238,12 +289,14 @@ def extract_info_from_txts():
     # ◦ i 10 trigrammi di PoS più frequenti;
     
     # ◦ i 20 Aggettivi e i 20 Avverbi più frequenti;
+
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
     # una frequenza maggiore di 3:
     # ◦ con frequenza massima, indicando anche la relativa frequenza;
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
     # indicando anche la relativa forza associativa;
+
     #  estraete le frasi con almeno 6 token e più corta di 25 token, dove ogni singolo token occorre
     # almeno due volte nel corpus di riferimento:
     # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
@@ -251,9 +304,11 @@ def extract_info_from_txts():
     # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
     # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
     # e dividendo la somma delle frequenze per il numero di token della frase stessa;
+
     # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
     # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
     # contiene le frasi;
+    
     #  dopo aver individuato e classificato le Entità Nominate (NE) presenti nel testo, estraete:
     # ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
 
