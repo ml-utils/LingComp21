@@ -1,4 +1,5 @@
 # from pathlib import Path
+import math
 import os
 import sys
 from typing import List, Tuple, Dict, Any, Optional
@@ -79,6 +80,30 @@ def get_dict_frequenze(
     topk_elements_as_dict = {x[0]: x[1] for x in topk_elements}
 
     return topk_elements_as_dict
+
+def get_bigrams_with_LMM(
+    allCorpusTokens: List[str],
+) -> Dict[Tuple[str, str], float]:
+
+    word_types_with_freq = dict()
+    word_types = set(allCorpusTokens)
+    for word_type in word_types:
+        tokFreq = allCorpusTokens.count(word_type)
+        word_types_with_freq[word_type] = tokFreq
+
+    allCorpusBigrams = list(nltk.bigrams(allCorpusTokens))
+    bigrams_with_LMM = dict()
+    uniqueBigrams = set(allCorpusBigrams)
+    for bigramma in uniqueBigrams:
+        frequenzaBigramma = allCorpusBigrams.count(bigramma)
+        probBigramma = frequenzaBigramma / len(allCorpusBigrams)
+        el_A_prob = word_types_with_freq[bigramma[0]]
+        el_B_prob = word_types_with_freq[bigramma[1]]
+        bigram_MutualInformation = math.log2(probBigramma / (el_A_prob * el_B_prob))
+        bigram_LocalMutualInformation = frequenzaBigramma * bigram_MutualInformation
+        bigrams_with_LMM[bigramma] = bigram_LocalMutualInformation
+
+    return bigrams_with_LMM
 
 
 def get_bigrams_with_conditioned_probability(
@@ -255,8 +280,10 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(
         adj_noun_bigrams, tokens_and_freqs, min_freq=4
     )
+
     # ◦ con frequenza massima, indicando anche la relativa frequenza;
     # TODO
+
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
     bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(
         tokensTOT
@@ -270,6 +297,9 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
     # indicando anche la relativa forza associativa;
+    bigrams_with_LMM = get_bigrams_with_LMM(
+        tokensTOT
+    )
 
     # Local Mutual Information bigrams..
 
