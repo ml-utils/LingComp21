@@ -15,15 +15,6 @@ PROPER_NOUNS = ["NNP", "NNPS"]
 PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
 
-def EstraiFrasi(filepath: str) -> List[str]:
-
-    with open(filepath, mode="r", encoding="utf-8") as fileInput1:
-        raw1 = fileInput1.read()
-    sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
-
-    return sent_tokenizer.tokenize(raw1)
-
-
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
     tokensTOT: List[str] = []
@@ -117,11 +108,13 @@ def get_trigrams_with_conditioned_probability(
 
     uniqueTrigrams = set(allCorpusTrigrams)
     for trigramma in uniqueTrigrams:
-        bigramma = tuple((trigramma[0], trigramma[1]))
+        bigramma: Tuple[str, str] = (trigramma[0], trigramma[1])
         frequenzaBigramma = bigrams_with_frequency[bigramma]
         frequenzaTrigramma = trigrams_with_frequency[trigramma]
         probCondizionataBigramma = frequenzaTrigramma * 1.0 / frequenzaBigramma * 1.0
         trigrams_with_conditioned_probability[trigramma] = probCondizionataBigramma
+
+    return trigrams_with_conditioned_probability
 
 def get_bigrams_with_measures(
     allCorpusTokens: List[str],
@@ -299,7 +292,7 @@ def filter_NE(
     named_entity_list = []
     for wanted_NE_class in wanted_NE_classes:
         for wanted_POS in wanted_POSes:
-            key: Tuple[str, str] = tuple((wanted_NE_class, wanted_POS))
+            key: Tuple[str, str] = (wanted_NE_class, wanted_POS)
             if key in NEs:
                 named_entity_list += NEs[key]
 
@@ -321,7 +314,7 @@ def get_all_NEs(
         if is_intermediate_node:
             if node.label() in ["PERSON", "GPE", "ORGANIZATION"]:
                 for leaf in node.leaves():
-                    key: Tuple[str, str] = tuple((node.label(), leaf[POS_IDX]))
+                    key: Tuple[str, str] = (node.label(), leaf[POS_IDX])
                     if key not in NE_by_class_and_POS:
                         NE_by_class_and_POS[key] = []
                     NE_by_class_and_POS[key].append(leaf[TOK_IDX])
@@ -335,7 +328,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     #  il numero di frasi e di token:
     sent_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
-    frasi = sent_tokenizer.tokenize(raw)
+    frasi: List[str] = sent_tokenizer.tokenize(raw)
     tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
 
     file_analisys_info: Dict[str, Any] = dict()
@@ -384,13 +377,13 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     file_analisys_info["most_frequent_adverbs"] = topk_adverbs
 
     #  estraete ed ordinate i 20 bigrammi composti da Aggettivo e Sostantivo
-    tokens_and_freqs = get_dict_frequenze(tokensTOT)
+    word_and_freqs = get_dict_frequenze(tokensTOT)
     adj_noun_bigrams = EstraiBigrammiPos(
         pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS
     )
     # dove ogni token ha una frequenza maggiore di 3:
     adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(
-        adj_noun_bigrams, tokens_and_freqs, min_freq=4
+        adj_noun_bigrams, word_and_freqs, min_freq=4
     )
 
     # ◦ con frequenza massima, indicando anche la relativa frequenza;
@@ -408,7 +401,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
         bigrams_with_conditioned_probability,
     ) = get_bigrams_with_measures(  # get_bigrams_with_conditioned_probability(
         tokensTOT,
-        tokens_and_freqs,
+        word_and_freqs,
         bigrams_with_frequency,
     )
     topk_adj_noun_by_cond_prob = filter_bigrams_by_measure(
@@ -435,21 +428,48 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     )
     k3 = 15
     file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(
-        selected_NE_list, tokens_and_freqs, topk=k3
+        selected_NE_list, word_and_freqs, topk=k3
     )
 
+    #  estraete le frasi con almeno 6 token e più corta di 25 token,
+    # dove ogni singolo token occorre almeno due volte nel corpus di riferimento:
+    filtered_sentences = filter_sentences(
+        frasi,
+        word_and_freqs,
+        min_lenght=6,
+        max_lenght=24,
+        min_token_freq=2,
+    )
+
+    # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
+    # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
+    # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
+    # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
+    # e dividendo la somma delle frequenze per il numero di token della frase stessa;
+    # TODO
+
+    # ◦ con probabilità più alta, dove la probabilità deve essere calcolata attraverso un modello
+    # di Markov di ordine 2. Il modello deve usare le statistiche estratte dal corpus che
+    # contiene le frasi;
     trigrams_with_frequency = get_trigrams_with_frequency(tokensTOT)
     trigrams_with_conditioned_probability = get_trigrams_with_conditioned_probability(
         tokensTOT,
         bigrams_with_frequency,
         trigrams_with_frequency,
     )
-    # get_sentence_prob_markov2(
-    #     sentence_tokens,
-    #     tokens_and_freqs,
-    #     bigrams_with_conditioned_probability,
-    #     trigrams_with_conditioned_probability,
-    # )
+
+    sentences_with_markov2_probs = get_sentences_with_markov2_probs(
+        filtered_sentences,
+        word_and_freqs,
+        len(tokensTOT),
+        bigrams_with_conditioned_probability,
+        trigrams_with_conditioned_probability,
+    )
+
+    top_sentence = list(sentences_with_markov2_probs)[0]
+    top_sentence_prob = sentences_with_markov2_probs[top_sentence]
+    max_mkv2_prob_sentence = (top_sentence, top_sentence_prob)
+    file_analisys_info["max_mkv2_prob_sentence"] = max_mkv2_prob_sentence
 
     return file_analisys_info
 
@@ -500,6 +520,50 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
     # #  distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
+def filter_sentences(
+    sentences: List[str],
+    words_and_freqs: Dict[str, int],
+    min_lenght: int,
+    max_lenght: int,
+    min_token_freq: int,
+):
+    filtered_sentences = []
+    for sentence in sentences:
+        sentence_tokens = nltk.word_tokenize(sentence)
+        sentence_lenght = len(sentence_tokens)
+        if min_lenght <= sentence_lenght <= max_lenght:
+            all_tokens_frequent_enough = True
+            for token in sentence_tokens:
+                if words_and_freqs[token] < min_token_freq:
+                    all_tokens_frequent_enough = False
+            if all_tokens_frequent_enough:
+                filtered_sentences.append(sentence)
+
+    return filtered_sentences
+
+def get_sentences_with_markov2_probs(
+        sentences: List[str],
+        tokens_and_freqs: Dict[str, int],
+        tokens_count: int,
+        bigrams_with_conditioned_probability,
+        trigrams_with_conditioned_probability,
+):
+
+    sentences_with_markov2_probs: Dict[str, float] = dict()
+    for sentence in sentences:
+        sentence_tokens = nltk.word_tokenize(sentence)
+        sentence_prob = get_sentence_prob_markov2(
+            sentence_tokens,
+            tokens_and_freqs,
+            tokens_count,
+            bigrams_with_conditioned_probability,
+            trigrams_with_conditioned_probability,
+        )
+        sentences_with_markov2_probs[sentence] = sentence_prob
+
+    return SortDecreasing(sentences_with_markov2_probs)
+
+
 def get_sentence_prob_markov2(
         sentence_tokens,
         tokens_and_freqs,
@@ -515,7 +579,7 @@ def get_sentence_prob_markov2(
     if len(sentence_tokens) == 1:
         return sentence_prob
 
-    first_bigram = tuple((sentence_tokens[0], sentence_tokens[1]))
+    first_bigram = (sentence_tokens[0], sentence_tokens[1])
     first_bigram_prob = bigrams_with_conditioned_probability[first_bigram]
     sentence_prob *= first_bigram_prob
     if len(sentence_tokens) == 2:
@@ -565,6 +629,19 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         f"con Local Mutual Information (LMM) massima, sono:"
     )
     print_info_helper(file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM")
+
+    print(
+        f"Tra le frasi con almeno 6 token e più corte di 25 token, "
+        f"di cui ogni singolo token occorre almeno due volte nel corpus di riferimento, "
+        f"vi sono:"
+    )
+    print(f"con con probabilità più alta secondo un modello di Markov di ordine 2:")
+    for file_info in file_infos:
+        print(f"{file_info['filename']}: ")
+        max_mkv2_prob_sentence = file_info["max_mkv2_prob_sentence"]
+        print(
+            f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}"
+        )
 
     # TODO:
     #  estraete le frasi con almeno 6 token e più corta di 25 token,
