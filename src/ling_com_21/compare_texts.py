@@ -13,7 +13,28 @@ ADVERBS = ["RB", "RBR", "RBS", "WRB"]
 NOUNS = ["NN", "NNS", "NNP", "NNPS"]  # sostantivi
 PROPER_NOUNS = ["NNP", "NNPS"]
 PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
-
+VERBS = ["VB", "VBD", "VBG", "VBN", "VBP", "VBZ"]
+CONTENT_WORDS = ADJECTIVES + NOUNS + VERBS + ADVERBS
+ARTICLES = ["DT", "WDT"]
+PREPOSITIONS = ["IN"]
+CONJUNCTIONS = ["CC"]
+PRONOUNS = ["PRP", "PRP$", "WP", "WP$"]
+OTHER_FUNCTIONAL = [
+    "EX",  # Existential there
+    "MD",  # Modal
+    "PDT", # Predeterminer
+    "POS", # possessive ending
+    "RP", # particle
+    "TO", # to
+    "UH", # interjection
+]
+FUNCTIONAL_WORDS = ARTICLES + PREPOSITIONS + CONJUNCTIONS + PRONOUNS + OTHER_FUNCTIONAL
+OTHER = [
+    "CD",  # CARDINAL NUMBER
+    "FW",  # foreign word
+    "LS",  # list item marker
+    "SYM",  # symbol
+]
 
 # slides name "AnnotazioneLinguistica"
 def GetPosTaggedTokens(frasi: List[str]) -> Tuple[List[str], List[Tuple[str, str]]]:
