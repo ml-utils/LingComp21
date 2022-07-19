@@ -71,8 +71,21 @@ def count_avg_token_lenght(
     return tokens_count, charsTOTcount, avg
 
 
+def get_word_types_with_freq(
+    allCorpusTokens: List[str],
+) -> Dict[str, int]:
+
+    word_types_with_freq = dict()
+    word_types = set(allCorpusTokens)
+    for word_type in word_types:
+        tokFreq = allCorpusTokens.count(word_type)
+        word_types_with_freq[word_type] = tokFreq
+    return word_types_with_freq
+
+
 def get_dict_frequenze(
-    mylist: List[Any], topk: Optional[int] = None
+    mylist: List[Any],
+    topk: Optional[int] = None
 ) -> Dict[Any, int]:
 
     freqDistribution = nltk.FreqDist(mylist)
@@ -84,20 +97,15 @@ def get_dict_frequenze(
 
 def get_bigrams_with_LMM(
     allCorpusTokens: List[str],
+    word_types_with_freq: Dict[str, int],
     bigrams_with_frequency: Dict[Tuple[str, str], int],
 ) -> Dict[Tuple[str, str], float]:
-
-    word_types_with_freq = dict()
-    word_types = set(allCorpusTokens)
-    for word_type in word_types:
-        tokFreq = allCorpusTokens.count(word_type)
-        word_types_with_freq[word_type] = tokFreq
 
     allCorpusBigrams = list(nltk.bigrams(allCorpusTokens))
     bigrams_with_LMM = dict()
     uniqueBigrams = set(allCorpusBigrams)
     for bigramma in uniqueBigrams:
-        frequenzaBigramma = bigrams_with_frequency[bigramma]  # allCorpusBigrams.count(bigramma)
+        frequenzaBigramma = bigrams_with_frequency[bigramma]
         probBigramma = frequenzaBigramma / len(allCorpusBigrams)
         el_A_prob = word_types_with_freq[bigramma[0]]
         el_B_prob = word_types_with_freq[bigramma[1]]
@@ -125,6 +133,7 @@ def get_bigrams_with_frequency(
 
 def get_bigrams_with_conditioned_probability(
     allCorpusTokens: List[str],
+    word_types_with_freq: Dict[str, int],
     bigrams_with_frequency: Dict[Tuple[str, str], int],
     topk: Optional[int] = None,
 ) -> Dict[Tuple[str, str], float]:
@@ -136,9 +145,9 @@ def get_bigrams_with_conditioned_probability(
     bigrams_with_conditioned_probability = dict()
     uniqueBigrams = set(allCorpusBigrams)
     for bigramma in uniqueBigrams:
-        frequenzaBigramma = bigrams_with_frequency[bigramma] # allCorpusBigrams.count(bigramma)
+        frequenzaBigramma = bigrams_with_frequency[bigramma]
         TOKEN_A_IDX = 0
-        frequenzaA = allCorpusTokens.count(bigramma[TOKEN_A_IDX])
+        frequenzaA = word_types_with_freq[bigramma[TOKEN_A_IDX]]
         probCondizionata = frequenzaBigramma / frequenzaA
         bigrams_with_conditioned_probability[bigramma] = probCondizionata
 
@@ -304,6 +313,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
     bigrams_with_conditioned_probability = get_bigrams_with_conditioned_probability(
         tokensTOT,
+        tokens_and_freqs,
         bigrams_with_frequency,
     )
     topk_adj_noun_by_cond_prob = filter_bigrams_by_measure(
@@ -315,7 +325,7 @@ def getFileAnalisysInfo(filepath: str) -> Dict:
 
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
     # indicando anche la relativa forza associativa;
-    bigrams_with_LMM = get_bigrams_with_LMM(tokensTOT, bigrams_with_frequency)
+    bigrams_with_LMM = get_bigrams_with_LMM(tokensTOT, tokens_and_freqs, bigrams_with_frequency)
     topk_adj_noun_by_LMM = filter_bigrams_by_measure(
         adj_noun_bigrams_filtered_by_tokfreq,
         bigrams_with_LMM,
