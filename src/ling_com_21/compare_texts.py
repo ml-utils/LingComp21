@@ -142,7 +142,11 @@ def get_bigrams_with_measures(
 def get_bigrams_with_frequency(
     allCorpusTokens: List[str],
 ) -> Dict[Tuple[str, str], int]:
+    """
 
+    :param allCorpusTokens:
+    :return: A dictionary of bigrams, sorted in decreasing order by their frequency.
+    """
     allCorpusBigrams: List[Tuple[str, str]] = list(nltk.bigrams(allCorpusTokens))
     bigrams_with_frequency: Dict[Tuple[str, str], int] = dict()
 
@@ -151,7 +155,7 @@ def get_bigrams_with_frequency(
         frequenzaBigramma = allCorpusBigrams.count(bigramma)
         bigrams_with_frequency[bigramma] = frequenzaBigramma
 
-    return bigrams_with_frequency
+    return SortDecreasing(bigrams_with_frequency)
 
 
 def filter_bigrams_by_measure(
@@ -159,7 +163,13 @@ def filter_bigrams_by_measure(
     bigrams_with_measure: Union[Dict[Tuple[str, str], float], Dict[Tuple[str, str], int]],
     topk: int,
 ) -> Dict[Tuple[str, str], float]:
+    """
 
+    :param tokpos_bigrams_to_filter:
+    :param bigrams_with_measure: Assumes that this dictionary is sorted in descreasing order on the measure.
+    :param topk:
+    :return:
+    """
     TOK_IDX = 0
     bare_bigrams_to_filter = [
         (x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter
@@ -388,6 +398,17 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     #     # Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
 
     # todo: calcoli su POS e frequenza, bi e tri-grammi pos
+
+    # ◦ con frequenza massima, indicando anche la relativa frequenza;
+    print(
+        f"I 20 bigrammi composti da Aggettivo e Sostantivo "
+        f"(dove ogni token ha una frequenza maggiore di 3), "
+        f"con frequenza massima, sono:"
+    )
+    print_info_helper(
+        file_infos, "topk_adj_noun_by_freq", "Bigram", measure="freq"
+    )
+
     print(
         f"I 20 bigrammi composti da Aggettivo e Sostantivo "
         f"(dove ogni token ha una frequenza maggiore di 3), "
@@ -396,6 +417,7 @@ def analize_files_and_print_results(filepath1: str, filepath2: str):
     print_info_helper(
         file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond"
     )
+
     print(
         f"I 20 bigrammi composti da Aggettivo e Sostantivo "
         f"(dove ogni token ha una frequenza maggiore di 3), "
