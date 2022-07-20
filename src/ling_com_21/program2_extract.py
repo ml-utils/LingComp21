@@ -87,7 +87,7 @@ def extract_info2(
 
     # ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
     (
-        bigrams_with_LMM,
+        bigrams_with_LMI,
         bigrams_with_conditioned_probability,
     ) = get_bigrams_with_measures(  # get_bigrams_with_conditioned_probability(
         tokensTOT,
@@ -103,12 +103,12 @@ def extract_info2(
 
     # ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
     # indicando anche la relativa forza associativa;
-    topk_adj_noun_by_LMM = filter_bigrams_by_measure(
+    topk_adj_noun_by_LMI = filter_bigrams_by_measure(
         adj_noun_bigrams_filtered_by_tokfreq,
-        bigrams_with_LMM,
+        bigrams_with_LMI,
         topk=k2,
     )
-    file_analisys_info["topk_adj_noun_by_LMM"] = topk_adj_noun_by_LMM
+    file_analisys_info["topk_adj_noun_by_LMI"] = topk_adj_noun_by_LMI
 
     NE_by_class_and_POS = get_all_NEs(pos_tagged_tokens)
     selected_NE_list = filter_NE(
@@ -245,11 +245,11 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         print(
             f"\nI 20 bigrammi composti da Aggettivo e Sostantivo "
             f"\n(dove ogni token ha una frequenza maggiore di 3), "
-            f"\ncon Local Mutual Information (LMM) massima, sono:",
+            f"\ncon Local Mutual Information (LMI) massima, sono:",
             file=f,
         )
         print_info_helper(
-            file_infos, "topk_adj_noun_by_LMM", "Bigramma", measure="LMM", file=f
+            file_infos, "topk_adj_noun_by_LMI", "Bigramma", measure="LMI", file=f
         )
 
         print(
