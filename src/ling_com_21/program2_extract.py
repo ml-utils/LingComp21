@@ -191,6 +191,11 @@ def program2_extract_info(
 
 def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
 
+    filename1 = file_analisys_info1["filename"]
+    filename2 = file_analisys_info2["filename"]
+
+    print(f"Analisi dei due testi {filename1} e {filename2} :")
+
     file_infos = [file_analisys_info1, file_analisys_info2]
     print(f"Le 10 PoS (Part-of-Speech) più frequenti sono:")
     print_info_helper(file_infos, "most_frequent_POS", "POS")

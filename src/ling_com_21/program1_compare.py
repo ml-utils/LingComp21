@@ -57,6 +57,8 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
 
+    print(f"Analisi dei due testi {filename1} e {filename2} :")
+
     print(
         f"Numero di frasi: "
         f"{file_analisys_info1['num_sentences']} ({filename1}) e "

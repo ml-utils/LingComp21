@@ -503,7 +503,6 @@ def analize_files_and_print_results(
     file_analisys_info2 = getFileAnalisysInfo(filepath2, extraction_function)
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
-    print(f"Analisi dei due testi {filename1} e {filename2} :")
 
     output_function(file_analisys_info1, file_analisys_info2)
 
