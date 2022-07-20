@@ -1,0 +1,334 @@
+Analisi dei due testi Cablegate.txt e Colbert.txt :
+Le 10 PoS (Part-of-Speech) più frequenti sono:
+Cablegate.txt: 
+POS: NNP  ----freq: 2275.00
+POS: NNS  ----freq: 1255.00
+POS: ,  ----freq: 1116.00
+POS: NN  ----freq: 1016.00
+POS: IN  ----freq: 937.00
+POS: CC  ----freq: 607.00
+POS: JJ  ----freq: 520.00
+POS: :  ----freq: 427.00
+POS: .  ----freq: 363.00
+POS: DT  ----freq: 356.00
+Colbert.txt: 
+POS: NN  ----freq: 864.00
+POS: .  ----freq: 557.00
+POS: DT  ----freq: 443.00
+POS: IN  ----freq: 439.00
+POS: PRP  ----freq: 424.00
+POS: JJ  ----freq: 349.00
+POS: NNP  ----freq: 331.00
+POS: ,  ----freq: 323.00
+POS: RB  ----freq: 312.00
+POS: VB  ----freq: 241.00
+I 10 bigram di PoS più frequenti sono:
+Cablegate.txt: 
+POS Bigram: ('NNP', ',')  ----freq: 753.00
+POS Bigram: (',', 'NNP')  ----freq: 678.00
+POS Bigram: ('NNP', 'NNP')  ----freq: 524.00
+POS Bigram: ('NNS', 'IN')  ----freq: 405.00
+POS Bigram: ('.', ':')  ----freq: 300.00
+POS Bigram: ('NN', 'IN')  ----freq: 282.00
+POS Bigram: ('NN', 'NNS')  ----freq: 280.00
+POS Bigram: ('IN', 'NNP')  ----freq: 261.00
+POS Bigram: ('DT', 'NNP')  ----freq: 230.00
+POS Bigram: ('NNS', ',')  ----freq: 200.00
+Colbert.txt: 
+POS Bigram: ('NN', '.')  ----freq: 204.00
+POS Bigram: ('DT', 'NN')  ----freq: 189.00
+POS Bigram: ('JJ', 'NN')  ----freq: 150.00
+POS Bigram: ('IN', 'DT')  ----freq: 136.00
+POS Bigram: ('PRP', 'VBP')  ----freq: 133.00
+POS Bigram: ('NN', 'IN')  ----freq: 118.00
+POS Bigram: ('TO', 'VB')  ----freq: 114.00
+POS Bigram: ('NN', ',')  ----freq: 106.00
+POS Bigram: ('DT', 'JJ')  ----freq: 106.00
+POS Bigram: ('NN', ':')  ----freq: 91.00
+I 10 trigrammi di PoS più frequenti sono:
+Cablegate.txt: 
+POS Trigram: ('NNP', ',', 'NNP')  ----freq: 653.00
+POS Trigram: (',', 'NNP', ',')  ----freq: 489.00
+POS Trigram: ('.', ':', 'NNS')  ----freq: 152.00
+POS Trigram: ('NNP', 'NNP', 'NNP')  ----freq: 148.00
+POS Trigram: (',', 'NNP', 'NNP')  ----freq: 143.00
+POS Trigram: ('IN', 'DT', 'NNP')  ----freq: 138.00
+POS Trigram: ('NNS', '.', ':')  ----freq: 131.00
+POS Trigram: ('(', 'NNP', ')')  ----freq: 129.00
+POS Trigram: ('NNP', 'NNP', ',')  ----freq: 124.00
+POS Trigram: ('NNS', 'IN', 'NNP')  ----freq: 119.00
+Colbert.txt: 
+POS Trigram: ('DT', 'JJ', 'NN')  ----freq: 78.00
+POS Trigram: ('.', 'NN', ':')  ----freq: 67.00
+POS Trigram: ('IN', 'DT', 'NN')  ----freq: 63.00
+POS Trigram: ('JJ', 'NN', '.')  ----freq: 48.00
+POS Trigram: ('.', 'PRP', 'VBP')  ----freq: 42.00
+POS Trigram: ('DT', 'NN', '.')  ----freq: 41.00
+POS Trigram: ('NN', 'IN', 'DT')  ----freq: 35.00
+POS Trigram: ('DT', 'NN', 'IN')  ----freq: 34.00
+POS Trigram: ('IN', 'DT', 'JJ')  ----freq: 32.00
+POS Trigram: ('NN', '.', 'PRP')  ----freq: 30.00
+I 20 aggettivi più frequenti sono:
+Cablegate.txt: 
+Adj: key  ----freq: 34.00
+Adj: other  ----freq: 31.00
+Adj: international  ----freq: 19.00
+Adj: human  ----freq: 19.00
+Adj: humanitarian  ----freq: 11.00
+Adj: foreign  ----freq: 11.00
+Adj: regional  ----freq: 10.00
+Adj: environmental  ----freq: 9.00
+Adj: new  ----freq: 8.00
+Adj: nuclear  ----freq: 8.00
+Adj: such  ----freq: 7.00
+Adj: specialized  ----freq: 7.00
+Adj: political  ----freq: 6.00
+Adj: economic  ----freq: 6.00
+Adj: s  ----freq: 6.00
+Adj: biometric  ----freq: 6.00
+Adj: future  ----freq: 6.00
+Adj: biographic  ----freq: 5.00
+Adj: available  ----freq: 5.00
+Adj: special  ----freq: 5.00
+Colbert.txt: 
+Adj: >  ----freq: 13.00
+Adj: young  ----freq: 11.00
+Adj: late  ----freq: 8.00
+Adj: more  ----freq: 8.00
+Adj: other  ----freq: 8.00
+Adj: next  ----freq: 6.00
+Adj: old  ----freq: 6.00
+Adj: little  ----freq: 6.00
+Adj: good  ----freq: 5.00
+Adj: blue  ----freq: 5.00
+Adj: iztkah  ----freq: 4.00
+Adj: much  ----freq: 4.00
+Adj: live  ----freq: 4.00
+Adj: last  ----freq: 4.00
+Adj: Good  ----freq: 4.00
+Adj: same  ----freq: 4.00
+Adj: im  ----freq: 4.00
+Adj: great  ----freq: 4.00
+Adj: first  ----freq: 4.00
+Adj: crazy  ----freq: 4.00
+I 20 avverbi più frequenti sono:
+Cablegate.txt: 
+Adv: especially  ----freq: 22.00
+Adv: particularly  ----freq: 12.00
+Adv: as  ----freq: 6.00
+Adv: well  ----freq: 6.00
+Adv: not  ----freq: 4.00
+Adv: more  ----freq: 3.00
+Adv: internally  ----freq: 2.00
+Adv: 3-end  ----freq: 1.00
+Adv: also  ----freq: 1.00
+Adv: further  ----freq: 1.00
+Adv: often  ----freq: 1.00
+Adv: when  ----freq: 1.00
+Adv: overseas  ----freq: 1.00
+Adv: how  ----freq: 1.00
+Adv: either  ----freq: 1.00
+Adv: where  ----freq: 1.00
+Adv: effectively  ----freq: 1.00
+Adv: regularly  ----freq: 1.00
+Adv: environmentally  ----freq: 1.00
+Adv: elsewhere  ----freq: 1.00
+Colbert.txt: 
+Adv: so  ----freq: 26.00
+Adv: not  ----freq: 20.00
+Adv: here  ----freq: 18.00
+Adv: just  ----freq: 17.00
+Adv: very  ----freq: 14.00
+Adv: now  ----freq: 13.00
+Adv: right  ----freq: 11.00
+Adv: back  ----freq: 11.00
+Adv: how  ----freq: 11.00
+Adv: So  ----freq: 10.00
+Adv: Now  ----freq: 9.00
+Adv: why  ----freq: 8.00
+Adv: then  ----freq: 8.00
+Adv: Well  ----freq: 8.00
+Adv: too  ----freq: 7.00
+Adv: there  ----freq: 7.00
+Adv: even  ----freq: 6.00
+Adv: also  ----freq: 6.00
+Adv: when  ----freq: 5.00
+Adv: higher  ----freq: 5.00
+I 20 bigrammi composti da Aggettivo e Sostantivo (dove ogni token ha una frequenza maggiore di 3), con frequenza massima, sono:
+Cablegate.txt: 
+Bigram: ('human', 'rights')  ----freq: 20.00
+Bigram: ('foreign', 'NGOs')  ----freq: 8.00
+Bigram: ('key', 'member')  ----freq: 8.00
+Bigram: ('humanitarian', 'assistance')  ----freq: 7.00
+Bigram: ('key', 'UN')  ----freq: 6.00
+Bigram: ('regional', 'groups')  ----freq: 6.00
+Bigram: ('specialized', 'agencies')  ----freq: 5.00
+Bigram: ('biometric', 'information')  ----freq: 5.00
+Bigram: ('key', 'Secretariat')  ----freq: 4.00
+Bigram: ('other', 'member')  ----freq: 4.00
+Bigram: ('key', 'officials')  ----freq: 4.00
+Bigram: ('Terrorist', 'Groups')  ----freq: 4.00
+Bigram: ('international', 'health')  ----freq: 4.00
+Bigram: ('overseas', 'UN')  ----freq: 3.00
+Bigram: ('international', 'organizations')  ----freq: 3.00
+Bigram: ('other', 'UN')  ----freq: 3.00
+Bigram: ('other', 'key')  ----freq: 3.00
+Bigram: ('environmental', 'protection')  ----freq: 2.00
+Bigram: ('financial', 'problems')  ----freq: 2.00
+Bigram: ('nuclear', 'program')  ----freq: 2.00
+Colbert.txt: 
+Bigram: ('>', 'Stephen')  ----freq: 13.00
+Bigram: ('late', 'show')  ----freq: 6.00
+Bigram: ('ed', 'Sullivan')  ----freq: 4.00
+Bigram: ('young', 'people')  ----freq: 4.00
+Bigram: ('American', 'horror')  ----freq: 4.00
+Bigram: ('iztkah', 'perlman')  ----freq: 4.00
+Bigram: ('gay', 'man')  ----freq: 3.00
+Bigram: ('next', 'week')  ----freq: 3.00
+Bigram: ('blue', 'wave')  ----freq: 2.00
+Bigram: ('ta', 'go')  ----freq: 2.00
+Bigram: ('♪', '♪')  ----freq: 2.00
+Bigram: ('crazy', 'witch')  ----freq: 2.00
+Bigram: ('other', 'things')  ----freq: 2.00
+Bigram: ('first', 'episode')  ----freq: 2.00
+Bigram: ('young', 'generation')  ----freq: 1.00
+Bigram: ('good', 'thing')  ----freq: 1.00
+Bigram: ('last', 'midterms')  ----freq: 1.00
+Bigram: ('young', 'man')  ----freq: 1.00
+Bigram: ('live', 'election')  ----freq: 1.00
+Bigram: ('same', 'thing')  ----freq: 1.00
+I 20 bigrammi composti da Aggettivo e Sostantivo (dove ogni token ha una frequenza maggiore di 3), con probabilità condizionata massima, sono:
+Cablegate.txt: 
+Bigram: ('human', 'rights')  ----prob.cond: 1.00
+Bigram: ('biometric', 'information')  ----prob.cond: 0.83
+Bigram: ('foreign', 'NGOs')  ----prob.cond: 0.73
+Bigram: ('Terrorist', 'Groups')  ----prob.cond: 0.67
+Bigram: ('humanitarian', 'assistance')  ----prob.cond: 0.64
+Bigram: ('specialized', 'agencies')  ----prob.cond: 0.62
+Bigram: ('overseas', 'UN')  ----prob.cond: 0.60
+Bigram: ('regional', 'groups')  ----prob.cond: 0.60
+Bigram: ('financial', 'problems')  ----prob.cond: 0.40
+Bigram: ('military', 'operations')  ----prob.cond: 0.40
+Bigram: ('biographic', 'reporting')  ----prob.cond: 0.40
+Bigram: ('terrorist', 'organizations')  ----prob.cond: 0.40
+Bigram: ('further', 'requirements')  ----prob.cond: 0.25
+Bigram: ('nuclear', 'program')  ----prob.cond: 0.25
+Bigram: ('additional', 'voting')  ----prob.cond: 0.25
+Bigram: ('additional', 'resolutions')  ----prob.cond: 0.25
+Bigram: ('additional', 'sanctions')  ----prob.cond: 0.25
+Bigram: ('nuclear', 'weapons')  ----prob.cond: 0.25
+Bigram: ('multilateral', 'development')  ----prob.cond: 0.25
+Bigram: ('Korean', 'officials')  ----prob.cond: 0.25
+Colbert.txt: 
+Bigram: ('ed', 'Sullivan')  ----prob.cond: 1.00
+Bigram: ('American', 'horror')  ----prob.cond: 1.00
+Bigram: ('iztkah', 'perlman')  ----prob.cond: 1.00
+Bigram: ('gay', 'man')  ----prob.cond: 0.75
+Bigram: ('late', 'show')  ----prob.cond: 0.75
+Bigram: ('♪', '♪')  ----prob.cond: 0.50
+Bigram: ('crazy', 'witch')  ----prob.cond: 0.50
+Bigram: ('next', 'week')  ----prob.cond: 0.50
+Bigram: ('>', 'Stephen')  ----prob.cond: 0.46
+Bigram: ('first', 'episode')  ----prob.cond: 0.40
+Bigram: ('young', 'people')  ----prob.cond: 0.36
+Bigram: ('blue', 'wave')  ----prob.cond: 0.33
+Bigram: ('ta', 'go')  ----prob.cond: 0.33
+Bigram: ('last', 'midterms')  ----prob.cond: 0.25
+Bigram: ('other', 'things')  ----prob.cond: 0.25
+Bigram: ('same', 'thing')  ----prob.cond: 0.25
+Bigram: ('only', 'one')  ----prob.cond: 0.25
+Bigram: ('great', 'show')  ----prob.cond: 0.25
+Bigram: ('last', 'episode')  ----prob.cond: 0.25
+Bigram: ('crazy', 'wig')  ----prob.cond: 0.25
+I 20 bigrammi composti da Aggettivo e Sostantivo (dove ogni token ha una frequenza maggiore di 3), con Local Mutual Information (LMM) massima, sono:
+Cablegate.txt: 
+Bigram: ('human', 'rights')  ----LMM: 177.53
+Bigram: ('foreign', 'NGOs')  ----LMM: 75.34
+Bigram: ('humanitarian', 'assistance')  ----LMM: 65.53
+Bigram: ('regional', 'groups')  ----LMM: 52.75
+Bigram: ('specialized', 'agencies')  ----LMM: 43.75
+Bigram: ('Terrorist', 'Groups')  ----LMM: 43.00
+Bigram: ('biometric', 'information')  ----LMM: 42.75
+Bigram: ('key', 'member')  ----LMM: 36.05
+Bigram: ('international', 'health')  ----LMM: 31.06
+Bigram: ('key', 'officials')  ----LMM: 23.54
+Bigram: ('key', 'Secretariat')  ----LMM: 20.65
+Bigram: ('financial', 'problems')  ----LMM: 20.03
+Bigram: ('international', 'organizations')  ----LMM: 19.76
+Bigram: ('nuclear', 'weapons')  ----LMM: 18.67
+Bigram: ('key', 'UN')  ----LMM: 18.22
+Bigram: ('nuclear', 'program')  ----LMM: 18.03
+Bigram: ('related', 'requirements')  ----LMM: 17.69
+Bigram: ('environmental', 'protection')  ----LMM: 17.16
+Bigram: ('biographic', 'reporting')  ----LMM: 17.11
+Bigram: ('terrorist', 'organizations')  ----LMM: 15.85
+Colbert.txt: 
+Bigram: ('>', 'Stephen')  ----LMM: 63.68
+Bigram: ('late', 'show')  ----LMM: 50.47
+Bigram: ('ed', 'Sullivan')  ----LMM: 42.54
+Bigram: ('American', 'horror')  ----LMM: 42.54
+Bigram: ('iztkah', 'perlman')  ----LMM: 39.31
+Bigram: ('young', 'people')  ----LMM: 29.90
+Bigram: ('next', 'week')  ----LMM: 27.94
+Bigram: ('gay', 'man')  ----LMM: 27.66
+Bigram: ('♪', '♪')  ----LMM: 19.27
+Bigram: ('first', 'episode')  ----LMM: 18.63
+Bigram: ('blue', 'wave')  ----LMM: 18.10
+Bigram: ('crazy', 'witch')  ----LMM: 16.63
+Bigram: ('other', 'things')  ----LMM: 16.63
+Bigram: ('ta', 'go')  ----LMM: 15.76
+Bigram: ('last', 'episode')  ----LMM: 8.63
+Bigram: ('crazy', 'wig')  ----LMM: 8.63
+Bigram: ('same', 'thing')  ----LMM: 8.31
+Bigram: ('Good', 'night')  ----LMM: 8.05
+Bigram: ('good', 'thing')  ----LMM: 7.99
+Bigram: ('good', 'things')  ----LMM: 7.99
+Tra le frasi con almeno 6 token e più corte di 25 token, di cui ogni singolo token occorre almeno due volte nel corpus di riferimento, vi sono:
+Con la media della distribuzione di frequenza dei token più alta:
+Cablegate.txt: 
+Avg. freq.: 303.84615384615387 testo: -- Plans, intentions, and agendas of UNSC sanctions committee  members.
+Colbert.txt: 
+Avg. freq.: 165.83333333333334 testo: Stephen: Well, Billy.
+Con la media della distribuzione di frequenza dei token più bassa:
+Cablegate.txt: 
+Avg. freq.: 85.15 testo: -- Efforts by organizations affiliated with terrorist  organizations or foreign intelligence organizations to obtain  NGO affiliation with the UN.
+Colbert.txt: 
+Avg. freq.: 34.0 testo: ( Laughter ) But thats not all!
+con con probabilità più alta secondo un modello di Markov di ordine 2:
+Cablegate.txt: 
+Prob: 9.672115291614277e-05 testo: -- Details on UNHCR funding shortfalls.
+Colbert.txt: 
+Prob: 0.0002227813597525816 testo: ( Cheers and applause ).
+15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:
+Cablegate.txt: 
+NE: International  ----freq: 43.00
+NE: Faso  ----freq: 30.00
+NE: Vietnam  ----freq: 30.00
+NE: Burkina  ----freq: 30.00
+NE: Rica  ----freq: 30.00
+NE: Costa  ----freq: 30.00
+NE: Issues  ----freq: 14.00
+NE: Organization  ----freq: 14.00
+NE: Security  ----freq: 13.00
+NE: World  ----freq: 13.00
+NE: Burma  ----freq: 12.00
+NE: African  ----freq: 11.00
+NE: Health  ----freq: 8.00
+NE: Human  ----freq: 8.00
+NE: Development  ----freq: 8.00
+Colbert.txt: 
+NE: Stephen  ----freq: 99.00
+NE: Im  ----freq: 21.00
+NE: Jon  ----freq: 17.00
+NE: Billy  ----freq: 12.00
+NE: Were  ----freq: 6.00
+NE: Trump  ----freq: 6.00
+NE: Tiffany  ----freq: 5.00
+NE: Itzhak  ----freq: 5.00
+NE: Hes  ----freq: 4.00
+NE: Sullivan  ----freq: 4.00
+NE: Please  ----freq: 4.00
+NE: Pierce  ----freq: 4.00
+NE: Colbert  ----freq: 3.00
+NE: Mr.  ----freq: 3.00
+NE: Okay  ----freq: 3.00

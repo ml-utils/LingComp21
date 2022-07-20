@@ -1,7 +1,7 @@
 # Penn Tree Bank tagset lists
 import math
 from itertools import islice
-from typing import Dict, List, Tuple, Any, Optional, Union
+from typing import Dict, List, Tuple, Any, Optional, Union, TextIO
 
 import nltk  # type: ignore
 
@@ -518,11 +518,16 @@ def get_basic_file_info(filepath: str):
 
 
 def print_info_helper(
-    file_infos, elements_key: str, element_descr: str, measure="freq"
+    file_infos,
+    elements_key: str,
+    element_descr: str,
+    file: TextIO,
+    measure="freq",
 ):
     for file_info in file_infos:
-        print(f"{file_info['filename']}: ")
+        print(f"{file_info['filename']}: ", file=file)
         for element_with_freq in file_info[elements_key].items():
             print(
                 f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}"
+                , file=file
             )

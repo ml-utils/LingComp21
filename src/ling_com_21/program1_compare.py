@@ -59,8 +59,6 @@ def extract_info1(
 
 def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
-    # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
-
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
 
