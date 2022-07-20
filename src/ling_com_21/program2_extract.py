@@ -208,7 +208,9 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         print(f"\nLe 10 PoS (Part-of-Speech) più frequenti sono:", file=f)
         print_info_helper(file_infos, "most_frequent_POS", "POS", file=f)
         print(f"\nI 10 bigram di PoS più frequenti sono:", file=f)
-        print_info_helper(file_infos, "most_frequent_POS_bigrams", "Bigramma POS", file=f)
+        print_info_helper(
+            file_infos, "most_frequent_POS_bigrams", "Bigramma POS", file=f
+        )
         print(f"\nI 10 trigrammi di PoS più frequenti sono:", file=f)
         print_info_helper(
             file_infos, "most_frequent_POS_trigrams", "Trigramma POS", file=f
@@ -260,7 +262,8 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         )
 
         print(
-            f"\nCon la media della distribuzione di frequenza dei token più alta:", file=f
+            f"\nCon la media della distribuzione di frequenza dei token più alta:",
+            file=f,
         )
         for file_info in file_infos:
             print(f"\n{file_info['filename']}: ", file=f)

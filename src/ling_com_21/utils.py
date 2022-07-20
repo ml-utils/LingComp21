@@ -542,7 +542,7 @@ def get_sentences_with_markov2_probs(
     tokens_count: int,
     bigrams_with_conditioned_probability,
     trigrams_with_conditioned_probability,
-    verbose=False
+    verbose=False,
 ) -> Dict[str, float]:
     """
     Prende in input:
@@ -697,7 +697,9 @@ def analize_files_and_print_results(
     output_function(file_analisys_info1, file_analisys_info2)
 
 
-def get_basic_file_info(filepath: str) -> Tuple[List[str], List[str], List[Tuple[str, str]]]:
+def get_basic_file_info(
+    filepath: str,
+) -> Tuple[List[str], List[str], List[Tuple[str, str]]]:
     """
     Dato in input il percorso di un file di testo contenente un corpus da analizzare,
     Restituisce:
