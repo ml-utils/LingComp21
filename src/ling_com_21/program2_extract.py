@@ -32,7 +32,7 @@ from utils import (
 )
 
 
-def program2_extract_info(
+def extract_info2(
     filepath: str,
 ) -> Dict[str, Any]:
 
@@ -285,7 +285,7 @@ def main():
     analize_files_and_print_results(
         filepath1=filepath1,
         filepath2=filepath2,
-        extraction_function=program2_extract_info,
+        extraction_function=extract_info2,
         output_function=print_results_helper_pt2,
     )
 

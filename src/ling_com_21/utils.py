@@ -1,6 +1,5 @@
 # Penn Tree Bank tagset lists
 import math
-import os
 from itertools import islice
 from typing import Dict, List, Tuple, Any, Optional, Union
 

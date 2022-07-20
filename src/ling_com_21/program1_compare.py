@@ -15,7 +15,7 @@ from utils import (
 )
 
 
-def program1_compare(
+def extract_info1(
     filepath: str,
 ) -> Dict[str, Any]:
 
@@ -139,7 +139,7 @@ def main():
     analize_files_and_print_results(
         filepath1=filepath1,
         filepath2=filepath2,
-        extraction_function=program1_compare,
+        extraction_function=extract_info1,
         output_function=print_results_helper_pt1,
     )
 
