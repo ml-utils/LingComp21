@@ -499,17 +499,13 @@ def analize_files_and_print_results(
 ):
     print(f"Caricamento dei file {filepath1} e {filepath2}")
 
-    file_analisys_info1 = getFileAnalisysInfo(filepath1, extraction_function)
-    file_analisys_info2 = getFileAnalisysInfo(filepath2, extraction_function)
-    filename1 = file_analisys_info1["filename"]
-    filename2 = file_analisys_info2["filename"]
+    file_analisys_info1 = extraction_function(filepath1)
+    file_analisys_info2 = extraction_function(filepath2)
 
     output_function(file_analisys_info1, file_analisys_info2)
 
-    # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
+def get_basic_file_info(filepath: str):
 
-
-def getFileAnalisysInfo(filepath: str, extraction_function) -> Dict:
     with open(filepath, mode="r", encoding="utf-8") as fileInput:
         raw = fileInput.read()
 
@@ -518,12 +514,7 @@ def getFileAnalisysInfo(filepath: str, extraction_function) -> Dict:
     frasi: List[str] = sent_tokenizer.tokenize(raw)
     tokensTOT, pos_tagged_tokens = GetPosTaggedTokens(frasi)
 
-    file_analisys_info: Dict[str, Any] = dict()
-    file_analisys_info["filename"] = os.path.basename(filepath)
-
-    extraction_function(file_analisys_info, frasi, tokensTOT, pos_tagged_tokens)
-
-    return file_analisys_info
+    return frasi, tokensTOT, pos_tagged_tokens
 
 
 def print_info_helper(

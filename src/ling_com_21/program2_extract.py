@@ -1,3 +1,4 @@
+import os
 import sys
 from typing import Dict, Any
 
@@ -26,16 +27,17 @@ from utils import (
     get_trigrams_with_conditioned_probability,
     get_sentences_with_markov2_probs,
     print_info_helper,
-    analize_files_and_print_results,
+    analize_files_and_print_results, get_basic_file_info,
 )
 
 
 def program2_extract_info(
-    file_analisys_info: Dict[str, Any],
-    frasi,
-    tokensTOT,
-    pos_tagged_tokens,
-):
+    filepath: str,
+) -> Dict[str, Any]:
+
+    file_analisys_info: Dict[str, Any] = dict()
+    file_analisys_info["filename"] = os.path.basename(filepath)
+    frasi, tokensTOT, pos_tagged_tokens = get_basic_file_info(filepath)
 
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
@@ -187,6 +189,8 @@ def program2_extract_info(
     prob_of_top_sentence_for_prob = sentences_with_markov2_probs[top_sentence_for_prob]
     max_mkv2_prob_sentence = (top_sentence_for_prob, prob_of_top_sentence_for_prob)
     file_analisys_info["max_mkv2_prob_sentence"] = max_mkv2_prob_sentence
+
+    return file_analisys_info
 
 
 def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):

@@ -1,3 +1,4 @@
+import os
 import sys
 from typing import Dict, Any
 
@@ -9,16 +10,17 @@ from utils import (
     get_percentage_of_word_classes,
     CONTENT_WORDS,
     FUNCTIONAL_WORDS,
-    analize_files_and_print_results,
+    analize_files_and_print_results, get_basic_file_info,
 )
 
 
 def program1_compare(
-    file_analisys_info: Dict[str, Any],
-    frasi,
-    tokensTOT,
-    pos_tagged_tokens,
-):
+    filepath: str,
+) -> Dict[str, Any]:
+
+    file_analisys_info: Dict[str, Any] = dict()
+    file_analisys_info["filename"] = os.path.basename(filepath)
+    frasi, tokensTOT, pos_tagged_tokens = get_basic_file_info(filepath)
 
     file_analisys_info["num_sentences"] = len(frasi)
     file_analisys_info["num_tokens"] = len(tokensTOT)
@@ -51,11 +53,18 @@ def program1_compare(
         pos_tagged_tokens, FUNCTIONAL_WORDS
     )
 
+    return file_analisys_info
 
 def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
+    # TODO: output: file di testo contenenti l'output ben formattato dei programmi.
+
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
+
+    # TODO convert prints in writing to file
+    # with open(filepath, mode="r", encoding="utf-8") as fileInput:
+    #     raw = fileInput.read()
 
     print(f"Analisi dei due testi {filename1} e {filename2} :")
 
