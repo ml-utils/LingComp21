@@ -5,21 +5,21 @@ from typing import Dict, Any
 import nltk  # type: ignore
 
 from utils import (
+    ADJECTIVES,
+    ADVERBS,
+    NOUNS,
+    PROPER_NOUNS,
+    PERSON_NE_CLASS,
     EstraiSequenzaPos,
     get_dict_frequenze,
     get_tokens_filterd_by_POS,
-    ADJECTIVES,
-    ADVERBS,
     EstraiBigrammiPos,
-    NOUNS,
     filterBigramsByTokenFreq,
     get_bigrams_with_frequency,
     filter_bigrams_by_measure,
     get_bigrams_with_measures,
     get_all_NEs,
     filter_NE,
-    PROPER_NOUNS,
-    PERSON_NE_CLASS,
     filter_NE_by_measure,
     filter_sentences,
     get_sentences_with_average_token_freq,
@@ -35,29 +35,64 @@ from utils import (
 def extract_info2(
     filepath: str,
 ) -> Dict[str, Any]:
+    """
+    Dato in input il percorso di un file di testo contenente un corpus,
+    ne estrae le seguenti informazioni, salvandole in un dizionario:
+     estrae e ordina in ordine di frequenza decrescente, indicando anche la relativa
+    frequenza:
+    ◦ le 10 PoS (Part-of-Speech) più frequenti;
+    ◦ i 10 bigrammi di PoS più frequenti;
+    ◦ i 10 trigrammi di PoS più frequenti;
+    ◦ i 20 Aggettivi e i 20 Avverbi più frequenti;
+     estrae ed ordina i 20 bigrammi composti da Aggettivo e Sostantivo e dove ogni token ha
+    una frequenza maggiore di 3:
+    ◦ con frequenza massima, indicando anche la relativa frequenza;
+    ◦ con probabilità condizionata massima, indicando anche la relativa probabilità;
+    ◦ con forza associativa (calcolata in termini di Local Mutual Information) massima,
+    indicando anche la relativa forza associativa;
+     estrae le frasi con almeno 6 token e più corte di 25 token, dove ogni singolo token occorre
+    almeno due volte nel corpus di riferimento:
+    ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
+    nell’altro, riportando anche la distribuzione media di frequenza;
+    ◦ con probabilità più alta, secondo un modello di Markov di ordine 2;
+     individua e classifica le Entità Nominate (NE) presenti nel testo, ed estrae:
+    ◦ i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
+    :param filepath:
+    :return: Restituisce un dizionario in cui le chiavi sono i nomi descrittivi
+    delle varie informazioni estratte, e i valori il loro valore.
+    """
 
+    # dizionario per raccogliere le varie info estratte, e che verrà restituito
     file_analisys_info: Dict[str, Any] = dict()
+
     file_analisys_info["filename"] = os.path.basename(filepath)
     frasi, tokensTOT, pos_tagged_tokens = get_basic_file_info(filepath)
 
     #  estraete ed ordinate in ordine di frequenza decrescente, indicando anche la relativa
     # frequenza:
+
+    k = 10  # k indica i primi k elementi (in ordine decrescente)
+
     # ◦ le 10 PoS (Part-of-Speech) più frequenti;
     listaPOS_inclusaPunteggiatura = EstraiSequenzaPos(
         pos_tagged_tokens, exclude_punctuation=False
     )
-    k = 10
     topk_frequenzePOS = get_dict_frequenze(listaPOS_inclusaPunteggiatura, topk=k)
     file_analisys_info["most_frequent_POS"] = topk_frequenzePOS
+
+    # i 10 bigrammi di PoS più frequenti;
     POSbigrams = nltk.bigrams(listaPOS_inclusaPunteggiatura)
     topk_POSbigrams = get_dict_frequenze(list(POSbigrams), topk=k)
     file_analisys_info["most_frequent_POS_bigrams"] = topk_POSbigrams
+
     # i 10 trigrammi di PoS più frequenti;
     POStrigrams = nltk.trigrams(listaPOS_inclusaPunteggiatura)
     topk_POStrigrams = get_dict_frequenze(list(POStrigrams), topk=k)
     file_analisys_info["most_frequent_POS_trigrams"] = topk_POStrigrams
 
-    k2 = 20
+    k2 = 20  # k2 indica i primi k2 elementi (in ordine decrescente)
+
+    # i 20 Aggettivi e i 20 Avverbi più frequenti;
     adjectives = get_tokens_filterd_by_POS(pos_tagged_tokens, ADJECTIVES)
     topk_adjectives = get_dict_frequenze(list(adjectives), topk=k2)
     file_analisys_info["most_frequent_adjectives"] = topk_adjectives
@@ -71,6 +106,7 @@ def extract_info2(
     adj_noun_bigrams = EstraiBigrammiPos(
         pos_tagged_tokens, wanted_POS_first=ADJECTIVES, wanted_POS_second=NOUNS
     )
+
     # dove ogni token ha una frequenza maggiore di 3:
     adj_noun_bigrams_filtered_by_tokfreq = filterBigramsByTokenFreq(
         adj_noun_bigrams, word_and_freqs, min_freq=4
@@ -89,7 +125,7 @@ def extract_info2(
     (
         bigrams_with_LMI,
         bigrams_with_conditioned_probability,
-    ) = get_bigrams_with_measures(  # get_bigrams_with_conditioned_probability(
+    ) = get_bigrams_with_measures(
         tokensTOT,
         word_and_freqs,
         bigrams_with_frequency,
@@ -110,17 +146,6 @@ def extract_info2(
     )
     file_analisys_info["topk_adj_noun_by_LMI"] = topk_adj_noun_by_LMI
 
-    NE_by_class_and_POS = get_all_NEs(pos_tagged_tokens)
-    selected_NE_list = filter_NE(
-        NE_by_class_and_POS,
-        wanted_POSes=PROPER_NOUNS,
-        wanted_NE_classes=[PERSON_NE_CLASS],
-    )
-    k3 = 15
-    file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(
-        selected_NE_list, word_and_freqs, topk=k3
-    )
-
     #  estraete le frasi con almeno 6 token e più corta di 25 token,
     # dove ogni singolo token occorre almeno due volte nel corpus di riferimento:
     filtered_sentences = filter_sentences(
@@ -132,8 +157,8 @@ def extract_info2(
     )
 
     # ◦ con la media della distribuzione di frequenza dei token più alta, in un caso, e più bassa
-    # nell’altro, riportando anche la distribuzione media di frequenza. La distribuzione media
-    # di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
+    # nell’altro, riportando anche la distribuzione media di frequenza.
+    # La distribuzione media di frequenza deve essere calcolata tenendo in considerazione la frequenza di tutti i token
     # presenti nella frase (calcolando la frequenza nel corpus dal quale la frase è stata estratta)
     # e dividendo la somma delle frequenze per il numero di token della frase stessa;
     sentences_with_average_token_freq = get_sentences_with_average_token_freq(
@@ -190,6 +215,20 @@ def extract_info2(
     prob_of_top_sentence_for_prob = sentences_with_markov2_probs[top_sentence_for_prob]
     max_mkv2_prob_sentence = (top_sentence_for_prob, prob_of_top_sentence_for_prob)
     file_analisys_info["max_mkv2_prob_sentence"] = max_mkv2_prob_sentence
+
+    # individua e classifica le Entità Nominate (NE) presenti nel testo,
+    NE_by_class_and_POS = get_all_NEs(pos_tagged_tokens)
+
+    # ed estrae i 15 nomi propri di persona più frequenti (tipi), ordinati per frequenza.
+    selected_NE_list = filter_NE(
+        NE_by_class_and_POS,
+        wanted_POSes=PROPER_NOUNS,
+        wanted_NE_classes=[PERSON_NE_CLASS],
+    )
+    k3 = 15
+    file_analisys_info["selected_topk_NE_with_freq"] = filter_NE_by_measure(
+        selected_NE_list, word_and_freqs, topk=k3
+    )
 
     return file_analisys_info
 

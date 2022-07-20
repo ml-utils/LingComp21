@@ -3,13 +3,13 @@ import sys
 from typing import Dict, Any
 
 from utils import (
+    CONTENT_WORDS,
+    FUNCTIONAL_WORDS,
     EstraiSequenzaPos,
     count_avg_token_lenght,
     get_hapax_count,
     get_incremental_vocab_info,
     get_percentage_of_word_classes,
-    CONTENT_WORDS,
-    FUNCTIONAL_WORDS,
     analize_files_and_print_results,
     get_basic_file_info,
 )
@@ -18,7 +18,21 @@ from utils import (
 def extract_info1(
     filepath: str,
 ) -> Dict[str, Any]:
-
+    """
+    Dato in input il percorso di un file di testo contenente un corpus,
+    ne estrae le seguenti informazioni statistiche, salvandole in un dizionario:
+      il numero di frasi e di token;
+      la lunghezza media delle frasi in termini di token e dei token (escludendo la punteggiatura)
+     in termini di caratteri;
+      il numero di hapax sui primi 1000 token;
+      la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
+     Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
+     di 500 token;
+      distribuzione in termini di percentuale dell’insieme delle parole piene (Aggettivi, Sostantivi,
+     Verbi, Avverbi) e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
+    :param filepath:
+    :return:
+    """
     file_analisys_info: Dict[str, Any] = dict()
     file_analisys_info["filename"] = os.path.basename(filepath)
     frasi, tokensTOT, pos_tagged_tokens = get_basic_file_info(filepath)
