@@ -1,1 +1,2 @@
-python .\src\ling_com_21\compare_texts.py Cablegate.txt Colbert.txt
+python .\src\ling_com_21\program1_compare.py Colbert.txt Cablegate.txt
+python .\src\ling_com_21\program2_extract.py Colbert.txt Cablegate.txt

@@ -140,12 +140,14 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
 
 def main():
-    if len(sys.argv) >= 3:
+    if len(sys.argv) == 3:
         filepath1 = sys.argv[1]
         filepath2 = sys.argv[2]
     else:
-        filepath1 = "..\\..\\Cablegate.txt"
-        filepath2 = "..\\..\\Colbert.txt"
+        print(f"Errore, argomenti di input non corretti: {sys.argv}")
+        # filepath1 = "..\\..\\Cablegate.txt"
+        # filepath2 = "..\\..\\Colbert.txt"
+        sys.exit(1)
 
     analize_files_and_print_results(
         filepath1=filepath1,

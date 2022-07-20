@@ -1,20 +1,33 @@
-Analisi dei due testi Cablegate.txt e Colbert.txt :
+Analisi dei due testi Colbert.txt e Cablegate.txt :
 
 Numero di frasi: 
-364 (Cablegate.txt) e 566 (Colbert.txt).
+566 (Colbert.txt) e 364 (Cablegate.txt).
 Numero di token totali: 
-10339 (Cablegate.txt) e 6359 (Colbert.txt).
+6359 (Colbert.txt) e 10339 (Cablegate.txt).
 Numero medio di token in una frase (escludendo la punteggiatura): 
-22.17 (Cablegate.txt) e 9.17 (Colbert.txt).
+9.17 (Colbert.txt) e 22.17 (Cablegate.txt).
 Numero medio dei caratteri di un token (escludendo la punteggiatura): 
-5.77 (Cablegate.txt) e 4.21 (Colbert.txt).
+4.21 (Colbert.txt) e 5.77 (Cablegate.txt).
 Numero di hapax sui primi 1000 token: 
-279 (Cablegate.txt) e 249 (Colbert.txt).
+249 (Colbert.txt) e 279 (Cablegate.txt).
 
 La grandezza del vocabolario (|V|) e la ricchezza lessicale (Type Token Ratio, TTR), 
 calcolati all'aumentare del corpus (|C|) per porzioni incrementali di 500 token: 
 
-Cablegate.txt :
+Colbert.txt :
+Token: 500, vocabolario: 232, TTR: 0.464
+Token: 1000, vocabolario: 395, TTR: 0.395
+Token: 1500, vocabolario: 550, TTR: 0.36666666666666664
+Token: 2000, vocabolario: 685, TTR: 0.3425
+Token: 2500, vocabolario: 823, TTR: 0.3292
+Token: 3000, vocabolario: 931, TTR: 0.31033333333333335
+Token: 3500, vocabolario: 1025, TTR: 0.29285714285714287
+Token: 4000, vocabolario: 1109, TTR: 0.27725
+Token: 4500, vocabolario: 1172, TTR: 0.2604444444444444
+Token: 5000, vocabolario: 1239, TTR: 0.2478
+Token: 5500, vocabolario: 1301, TTR: 0.23654545454545456
+Token: 6000, vocabolario: 1359, TTR: 0.2265
+Colbert.txt :
 Token: 500, vocabolario: 236, TTR: 0.472
 Token: 1000, vocabolario: 395, TTR: 0.395
 Token: 1500, vocabolario: 536, TTR: 0.35733333333333334
@@ -35,20 +48,7 @@ Token: 8500, vocabolario: 1482, TTR: 0.1743529411764706
 Token: 9000, vocabolario: 1553, TTR: 0.17255555555555555
 Token: 9500, vocabolario: 1631, TTR: 0.1716842105263158
 Token: 10000, vocabolario: 1669, TTR: 0.1669
-Cablegate.txt :
-Token: 500, vocabolario: 232, TTR: 0.464
-Token: 1000, vocabolario: 395, TTR: 0.395
-Token: 1500, vocabolario: 550, TTR: 0.36666666666666664
-Token: 2000, vocabolario: 685, TTR: 0.3425
-Token: 2500, vocabolario: 823, TTR: 0.3292
-Token: 3000, vocabolario: 931, TTR: 0.31033333333333335
-Token: 3500, vocabolario: 1025, TTR: 0.29285714285714287
-Token: 4000, vocabolario: 1109, TTR: 0.27725
-Token: 4500, vocabolario: 1172, TTR: 0.2604444444444444
-Token: 5000, vocabolario: 1239, TTR: 0.2478
-Token: 5500, vocabolario: 1301, TTR: 0.23654545454545456
-Token: 6000, vocabolario: 1359, TTR: 0.2265
 Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : 
-54.92% (Cablegate.txt) e 48.47% (Colbert.txt).
+48.47% (Colbert.txt) e 54.92% (Cablegate.txt).
 Percentuale delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi) : 
-21.52% (Cablegate.txt) e 30.10% (Colbert.txt).
+30.10% (Colbert.txt) e 21.52% (Cablegate.txt).
