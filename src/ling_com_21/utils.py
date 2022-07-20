@@ -411,8 +411,8 @@ def get_sentences_with_markov2_probs(
     tokens_count: int,
     bigrams_with_conditioned_probability,
     trigrams_with_conditioned_probability,
+    verbose=False
 ):
-
     sentences_with_markov2_probs: Dict[str, float] = dict()
     for sentence in sentences:
         sentence_tokens = nltk.word_tokenize(sentence)
@@ -425,7 +425,14 @@ def get_sentences_with_markov2_probs(
         )
         sentences_with_markov2_probs[sentence] = sentence_prob
 
-    return SortDecreasing(sentences_with_markov2_probs)
+    sorted_sentences_with_markov2_probs = SortDecreasing(sentences_with_markov2_probs)
+
+    if verbose:
+        print(f"DEBUG: ")
+        for sentence, prob in sorted_sentences_with_markov2_probs.items():
+            print(f"Prob.: {prob}, ----Sentence: {sentence}")
+
+    return sorted_sentences_with_markov2_probs
 
 
 def get_sentences_with_average_token_freq(
@@ -525,7 +532,7 @@ def print_info_helper(
     measure="freq",
 ):
     for file_info in file_infos:
-        print(f"{file_info['filename']}: ", file=file)
+        print(f"\n{file_info['filename']}: ", file=file)
         for element_with_freq in file_info[elements_key].items():
             print(
                 f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}",
