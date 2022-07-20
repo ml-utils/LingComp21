@@ -37,11 +37,11 @@ def extract_info1(
     file_analisys_info["filename"] = os.path.basename(filepath)
     frasi, tokensTOT, pos_tagged_tokens = get_basic_file_info(filepath)
 
+    # Estrae il numero di frasi e di token
     file_analisys_info["num_sentences"] = len(frasi)
     file_analisys_info["num_tokens"] = len(tokensTOT)
 
-    # numero medio di token in una frase (escludendo la punteggiatura)
-
+    # Estrae il numero medio di token in una frase (escludendo la punteggiatura)
     listaPOS_SenzaPunteggiatura = EstraiSequenzaPos(
         pos_tagged_tokens, exclude_punctuation=True
     )
@@ -49,18 +49,27 @@ def extract_info1(
         listaPOS_SenzaPunteggiatura
     ) / len(frasi)
 
+    # Estrae numero medio di caratteri per token
     tokens_count, charsTOTcount, avg_chars_per_token = count_avg_token_lenght(
         pos_tagged_tokens, exclude_punctuation=True
     )
     file_analisys_info["avg_chars_per_token"] = avg_chars_per_token
 
+    # Estrae il numero di hapax sui primi 1000 token;
     file_analisys_info["num_hapax_first_1000_tokens"] = get_hapax_count(
         tokensTOT, tokens_limit=1000
     )
+
+    # Estrae la grandezza del vocabolario e la ricchezza lessicale calcolata attraverso la Type Token
+    #  Ratio (TTR), in entrambi i casi calcolati all'aumentare del corpus per porzioni incrementali
+    # di 500 token;
     file_analisys_info["incremental_vocab_info"] = get_incremental_vocab_info(
         tokensTOT, corpus_lenght_increments=500
     )
 
+    # Estrae la distribuzione in termini di percentuale
+    # dell’insieme delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi)
+    # e delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi).
     file_analisys_info["perc_content_words"] = get_percentage_of_word_classes(
         pos_tagged_tokens, CONTENT_WORDS
     )
