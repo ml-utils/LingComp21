@@ -67,17 +67,17 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
     # TODO well formatted output
     with open(output_filename, mode="w", encoding="utf-8") as f:
 
-        print(f"Analisi dei due testi {filename1} e {filename2} :", file=f)
+        print(f"Analisi dei due testi {filename1} e {filename2} :\n", file=f)
 
         print(
-            f"Numero di frasi: "
+            f"Numero di frasi: \n"
             f"{file_analisys_info1['num_sentences']} ({filename1}) e "
             f"{file_analisys_info2['num_sentences']} ({filename2}).",
             file=f,
         )
 
         print(
-            f"Numero di token totali: "
+            f"Numero di token totali: \n"
             f"{file_analisys_info1['num_tokens']} ({filename1}) e "
             f"{file_analisys_info2['num_tokens']} ({filename2}).",
             file=f,
@@ -86,28 +86,29 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         # I due testi hanno rispettivamente 10339 e 6462 token totali.
 
         print(
-            f"Numero medio di token in una frase (escludendo la punteggiatura): "
+            f"Numero medio di token in una frase (escludendo la punteggiatura): \n"
             f"{file_analisys_info1['avg_tokens_per_sentence']:.2f} ({filename1}) e "
             f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2}).",
             file=f,
         )
 
         print(
-            f"Numero medio dei caratteri di un token (escludendo la punteggiatura): "
+            f"Numero medio dei caratteri di un token (escludendo la punteggiatura): \n"
             f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
             f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).",
             file=f,
         )
 
         print(
-            f"Numero di hapax sui primi 1000 token: "
+            f"Numero di hapax sui primi 1000 token: \n"
             f"{file_analisys_info1['num_hapax_first_1000_tokens']} ({filename1}) e "
             f"{file_analisys_info2['num_hapax_first_1000_tokens']} ({filename2}).",
             file=f,
         )
 
         print(
-            f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):",
+            f"\nLa grandezza del vocabolario (|V|) e la ricchezza lessicale (Type Token Ratio, TTR), \n"
+            f"calcolati all'aumentare del corpus (|C|) per porzioni incrementali di 500 token: \n",
             file=f,
         )
         for file_analisys_info in [file_analisys_info1, file_analisys_info2]:
@@ -118,18 +119,18 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
                 ]
                 TTR = file_analisys_info["incremental_vocab_info"][corpus_limit]["TTR"]
                 print(
-                    f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}",
+                    f"Token: {corpus_limit}, vocabolario: {vocab_size}, TTR: {TTR}",
                     file=f,
                 )
 
         print(
-            f"Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : "
+            f"Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : \n"
             f"{file_analisys_info1['perc_content_words']:.2%} ({filename1}) e "
             f"{file_analisys_info2['perc_content_words']:.2%} ({filename2}).",
             file=f,
         )
         print(
-            f"Percentuale delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi) : "
+            f"Percentuale delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi) : \n"
             f"{file_analisys_info1['perc_functional_words']:.2%} ({filename1}) e "
             f"{file_analisys_info2['perc_functional_words']:.2%} ({filename2}).",
             file=f,
