@@ -585,6 +585,43 @@ def get_sentences_with_markov2_probs(
     return sorted_sentences_with_markov2_probs
 
 
+def get_token_prob(token, word_and_freqs, tokens_count) -> float:
+    """
+    Given a token, word types frequency information, and corpus size, returns the token probabiliy.
+    If the token is not in the corpus, returns 0.
+    :param token:
+    :param word_and_freqs:
+    :param tokens_count:
+    :return:
+    """
+    if token in word_and_freqs:
+        token_prob = word_and_freqs[token] / tokens_count
+    else:
+        token_prob = 0
+
+    return token_prob
+
+
+def get_ngram_cond_prob(
+    ngram: Union[Tuple[str, str], Tuple[str, str, str]],
+    ngrams_with_conditioned_probability: Dict[Any, float],
+) -> float:
+    """
+    Given a bigram or trigram, and the conditioned probabilities of all bigrams or trigrams in the corpus,
+    returns its probability. If it is not in the corpus, returns 0.
+    :param token:
+    :param word_and_freqs:
+    :param tokens_count:
+    :return:
+    """
+    if ngram in ngrams_with_conditioned_probability:
+        ngram_cond_prob = ngrams_with_conditioned_probability[ngram]
+    else:
+        ngram_cond_prob = 0
+
+    return ngram_cond_prob
+
+
 def get_sentence_prob_markov2(
     sentence_tokens,
     word_and_freqs,
@@ -600,6 +637,8 @@ def get_sentence_prob_markov2(
      * la dimensione del corpus @tokens_count,
      * le probabilità condizionate dei bigrammi presenti nel testo,
      * le probabilità condizionate dei trigrammi presenti nel testo.
+     NB: non effettua alcuno smoothing (i.e. add one smoothing), per cui se una parola, un bigramma
+     o trigramma della frase non esiste nel corpus, la probabilità della frase è 0.
     :param sentence_tokens:
     :param word_and_freqs:
     :param tokens_count:
@@ -607,23 +646,30 @@ def get_sentence_prob_markov2(
     :param trigrams_with_conditioned_probability:
     :return:
     """
+    if len(sentence_tokens) == 0:
+        return 0
+
     sentence_prob = 1.0
 
     first_token: str = sentence_tokens[0]
-    first_token_prob = word_and_freqs[first_token] / tokens_count
+    first_token_prob = get_token_prob(first_token, word_and_freqs, tokens_count)
     sentence_prob *= first_token_prob
     if len(sentence_tokens) == 1:
         return sentence_prob
 
     first_bigram = (sentence_tokens[0], sentence_tokens[1])
-    first_bigram_prob = bigrams_with_conditioned_probability[first_bigram]
+    first_bigram_prob = get_ngram_cond_prob(
+        first_bigram, bigrams_with_conditioned_probability
+    )
     sentence_prob *= first_bigram_prob
     if len(sentence_tokens) == 2:
         return sentence_prob
 
     sentence_trigrams = nltk.trigrams(sentence_tokens)
     for trigram in sentence_trigrams:
-        trigram_prob = trigrams_with_conditioned_probability[trigram]
+        trigram_prob = get_ngram_cond_prob(
+            trigram, trigrams_with_conditioned_probability
+        )
         sentence_prob *= trigram_prob
 
     return sentence_prob
