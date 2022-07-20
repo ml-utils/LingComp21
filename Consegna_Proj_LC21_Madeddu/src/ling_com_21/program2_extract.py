@@ -359,7 +359,7 @@ def save_well_formatted_output_to_text_file(file_analisys_info1, file_analisys_i
             file_infos, "selected_topk_NE_with_freq", "Nome", measure="freq", file=f
         )
 
-    print(f"Report salvato su {output_filename}")
+    print(f"written output to {output_filename}")
 
 
 def main():

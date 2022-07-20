@@ -735,7 +735,7 @@ def analize_files_and_print_results(
     :param output_function:
     :return:
     """
-    print(f"Verranno analizzati i file {filepath1} e {filepath2}..")
+    print(f"Caricamento dei file {filepath1} e {filepath2}")
 
     file_analisys_info1 = extraction_function(filepath1)
     file_analisys_info2 = extraction_function(filepath2)

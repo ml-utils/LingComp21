@@ -166,7 +166,7 @@ def save_well_formatted_output_to_text_file(file_analisys_info1, file_analisys_i
             file=f,
         )
 
-    print(f"Report salvato su {output_filename}")
+    print(f"written output to {output_filename}")
 
 
 def main():
