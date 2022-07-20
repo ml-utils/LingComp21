@@ -71,8 +71,15 @@ def extract_info1(
     return file_analisys_info
 
 
-def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
-
+def save_well_formatted_output_to_text_file(file_analisys_info1, file_analisys_info2):
+    """
+    Salva su file output di testo, le informazioni ben formattate
+    contenute nei due dizionari in input (corrispondenti ognuno ad un corpus
+    precedentemente analizzato).
+    :param file_analisys_info1:
+    :param file_analisys_info2:
+    :return:
+    """
     filename1 = file_analisys_info1["filename"]
     filename2 = file_analisys_info2["filename"]
 
@@ -154,6 +161,11 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
 
 def main():
+    """
+    Si aspetta come argomenti da linea di comando i path di due file di testo da analizzare.
+    Estrae informazioni dai due file, e salva in output il confronto ben formattato tra i due.
+    :return:
+    """
     if len(sys.argv) == 3:
         filepath1 = sys.argv[1]
         filepath2 = sys.argv[2]
@@ -167,7 +179,7 @@ def main():
         filepath1=filepath1,
         filepath2=filepath2,
         extraction_function=extract_info1,
-        output_function=print_results_helper_pt1,
+        output_function=save_well_formatted_output_to_text_file,
     )
 
 
