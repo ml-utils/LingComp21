@@ -27,7 +27,8 @@ from utils import (
     get_trigrams_with_conditioned_probability,
     get_sentences_with_markov2_probs,
     print_info_helper,
-    analize_files_and_print_results, get_basic_file_info,
+    analize_files_and_print_results,
+    get_basic_file_info,
 )
 
 

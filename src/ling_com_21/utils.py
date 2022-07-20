@@ -504,6 +504,7 @@ def analize_files_and_print_results(
 
     output_function(file_analisys_info1, file_analisys_info2)
 
+
 def get_basic_file_info(filepath: str):
 
     with open(filepath, mode="r", encoding="utf-8") as fileInput:

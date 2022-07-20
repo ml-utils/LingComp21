@@ -10,7 +10,8 @@ from utils import (
     get_percentage_of_word_classes,
     CONTENT_WORDS,
     FUNCTIONAL_WORDS,
-    analize_files_and_print_results, get_basic_file_info,
+    analize_files_and_print_results,
+    get_basic_file_info,
 )
 
 
@@ -54,6 +55,7 @@ def program1_compare(
     )
 
     return file_analisys_info
+
 
 def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
