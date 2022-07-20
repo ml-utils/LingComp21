@@ -528,6 +528,6 @@ def print_info_helper(
         print(f"{file_info['filename']}: ", file=file)
         for element_with_freq in file_info[elements_key].items():
             print(
-                f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}"
-                , file=file
+                f"{element_descr}: {element_with_freq[0]}  ----{measure}: {element_with_freq[1]:.2f}",
+                file=file,
             )

@@ -210,7 +210,9 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         print(f"I 10 bigram di PoS più frequenti sono:", file=f)
         print_info_helper(file_infos, "most_frequent_POS_bigrams", "POS Bigram", file=f)
         print(f"I 10 trigrammi di PoS più frequenti sono:", file=f)
-        print_info_helper(file_infos, "most_frequent_POS_trigrams", "POS Trigram", file=f)
+        print_info_helper(
+            file_infos, "most_frequent_POS_trigrams", "POS Trigram", file=f
+        )
         print(f"I 20 aggettivi più frequenti sono:", file=f)
         print_info_helper(file_infos, "most_frequent_adjectives", "Adj", file=f)
         print(f"I 20 avverbi più frequenti sono:", file=f)
@@ -219,72 +221,93 @@ def print_results_helper_pt2(file_analisys_info1, file_analisys_info2):
         print(
             f"I 20 bigrammi composti da Aggettivo e Sostantivo "
             f"(dove ogni token ha una frequenza maggiore di 3), "
-            f"con frequenza massima, sono:"
-            , file=f
-        )
-        print_info_helper(file_infos, "topk_adj_noun_by_freq", "Bigram", measure="freq", file=f)
-
-        print(
-            f"I 20 bigrammi composti da Aggettivo e Sostantivo "
-            f"(dove ogni token ha una frequenza maggiore di 3), "
-            f"con probabilità condizionata massima, sono:"
-            , file=f
+            f"con frequenza massima, sono:",
+            file=f,
         )
         print_info_helper(
-            file_infos, "topk_adj_noun_by_cond_prob", "Bigram", measure="prob.cond"
-            , file=f
+            file_infos, "topk_adj_noun_by_freq", "Bigram", measure="freq", file=f
         )
 
         print(
             f"I 20 bigrammi composti da Aggettivo e Sostantivo "
             f"(dove ogni token ha una frequenza maggiore di 3), "
-            f"con Local Mutual Information (LMM) massima, sono:"
-            , file=f
+            f"con probabilità condizionata massima, sono:",
+            file=f,
         )
-        print_info_helper(file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM", file=f)
+        print_info_helper(
+            file_infos,
+            "topk_adj_noun_by_cond_prob",
+            "Bigram",
+            measure="prob.cond",
+            file=f,
+        )
+
+        print(
+            f"I 20 bigrammi composti da Aggettivo e Sostantivo "
+            f"(dove ogni token ha una frequenza maggiore di 3), "
+            f"con Local Mutual Information (LMM) massima, sono:",
+            file=f,
+        )
+        print_info_helper(
+            file_infos, "topk_adj_noun_by_LMM", "Bigram", measure="LMM", file=f
+        )
 
         print(
             f"Tra le frasi con almeno 6 token e più corte di 25 token, "
             f"di cui ogni singolo token occorre almeno due volte nel corpus di riferimento, "
-            f"vi sono:"
-            , file=f
+            f"vi sono:",
+            file=f,
         )
 
-        print(f"Con la media della distribuzione di frequenza dei token più alta:", file=f)
+        print(
+            f"Con la media della distribuzione di frequenza dei token più alta:", file=f
+        )
         for file_info in file_infos:
             print(f"{file_info['filename']}: ", file=f)
             top_sentence_for_average_token_freq = file_info[
                 "top_sentence_for_average_token_freq"
             ]
             print(
-                f"Avg. freq.: {top_sentence_for_average_token_freq[1]} testo: {top_sentence_for_average_token_freq[0]}"
-                , file=f
+                f"Avg. freq.: {top_sentence_for_average_token_freq[1]} testo: {top_sentence_for_average_token_freq[0]}",
+                file=f,
             )
 
-        print(f"Con la media della distribuzione di frequenza dei token più bassa:", file=f)
+        print(
+            f"Con la media della distribuzione di frequenza dei token più bassa:",
+            file=f,
+        )
         for file_info in file_infos:
             print(f"{file_info['filename']}: ", file=f)
             last_sentence_for_average_token_freq = file_info[
                 "last_sentence_for_average_token_freq"
             ]
             print(
-                f"Avg. freq.: {last_sentence_for_average_token_freq[1]} testo: {last_sentence_for_average_token_freq[0]}"
-                , file=f
+                f"Avg. freq.: {last_sentence_for_average_token_freq[1]} testo: {last_sentence_for_average_token_freq[0]}",
+                file=f,
             )
 
-        print(f"con con probabilità più alta secondo un modello di Markov di ordine 2:", file=f)
+        print(
+            f"con con probabilità più alta secondo un modello di Markov di ordine 2:",
+            file=f,
+        )
         for file_info in file_infos:
             print(f"{file_info['filename']}: ", file=f)
             max_mkv2_prob_sentence = file_info["max_mkv2_prob_sentence"]
-            print(f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}", file=f)
+            print(
+                f"Prob: {max_mkv2_prob_sentence[1]} testo: {max_mkv2_prob_sentence[0]}",
+                file=f,
+            )
 
         print(
-            f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:"
-            , file=f
+            f"15 nomi propri di persona più frequenti (tipi), ordinati per frequenza, sono:",
+            file=f,
         )
-        print_info_helper(file_infos, "selected_topk_NE_with_freq", "NE", measure="freq", file=f)
+        print_info_helper(
+            file_infos, "selected_topk_NE_with_freq", "NE", measure="freq", file=f
+        )
 
     print(f"written output to {output_filename}")
+
 
 def main():
     if len(sys.argv) >= 3:

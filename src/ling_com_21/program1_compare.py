@@ -64,7 +64,7 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
 
     output_filename = "output_prog1.txt"
 
-    # TODO convert prints in writing to file
+    # TODO well formatted output
     with open(output_filename, mode="w", encoding="utf-8") as f:
 
         print(f"Analisi dei due testi {filename1} e {filename2} :", file=f)
@@ -72,15 +72,15 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         print(
             f"Numero di frasi: "
             f"{file_analisys_info1['num_sentences']} ({filename1}) e "
-            f"{file_analisys_info2['num_sentences']} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['num_sentences']} ({filename2}).",
+            file=f,
         )
 
         print(
             f"Numero di token totali: "
             f"{file_analisys_info1['num_tokens']} ({filename1}) e "
-            f"{file_analisys_info2['num_tokens']} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['num_tokens']} ({filename2}).",
+            file=f,
         )
         # I due testi hanno rispettivamente 364 e 567 frasi.
         # I due testi hanno rispettivamente 10339 e 6462 token totali.
@@ -88,27 +88,27 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
         print(
             f"Numero medio di token in una frase (escludendo la punteggiatura): "
             f"{file_analisys_info1['avg_tokens_per_sentence']:.2f} ({filename1}) e "
-            f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['avg_tokens_per_sentence']:.2f} ({filename2}).",
+            file=f,
         )
 
         print(
             f"Numero medio dei caratteri di un token (escludendo la punteggiatura): "
             f"{file_analisys_info1['avg_chars_per_token']:.2f} ({filename1}) e "
-            f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['avg_chars_per_token']:.2f} ({filename2}).",
+            file=f,
         )
 
         print(
             f"Numero di hapax sui primi 1000 token: "
             f"{file_analisys_info1['num_hapax_first_1000_tokens']} ({filename1}) e "
-            f"{file_analisys_info2['num_hapax_first_1000_tokens']} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['num_hapax_first_1000_tokens']} ({filename2}).",
+            file=f,
         )
 
         print(
-            f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):"
-            , file=f
+            f"La grandezza del vocabolario e la ricchezza lessicale (Type Token Ratio, TTR):",
+            file=f,
         )
         for file_analisys_info in [file_analisys_info1, file_analisys_info2]:
             print(f"{filename1} :", file=f)
@@ -118,24 +118,25 @@ def print_results_helper_pt1(file_analisys_info1, file_analisys_info2):
                 ]
                 TTR = file_analisys_info["incremental_vocab_info"][corpus_limit]["TTR"]
                 print(
-                    f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}"
-                    , file=f
+                    f"Corpus lenght: {corpus_limit}, vocab_size: {vocab_size}, TTR: {TTR}",
+                    file=f,
                 )
 
         print(
             f"Percentuale delle parole piene (Aggettivi, Sostantivi, Verbi, Avverbi) : "
             f"{file_analisys_info1['perc_content_words']:.2%} ({filename1}) e "
-            f"{file_analisys_info2['perc_content_words']:.2%} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['perc_content_words']:.2%} ({filename2}).",
+            file=f,
         )
         print(
             f"Percentuale delle parole funzionali (Articoli, Preposizioni, Congiunzioni, Pronomi) : "
             f"{file_analisys_info1['perc_functional_words']:.2%} ({filename1}) e "
-            f"{file_analisys_info2['perc_functional_words']:.2%} ({filename2})."
-            , file=f
+            f"{file_analisys_info2['perc_functional_words']:.2%} ({filename2}).",
+            file=f,
         )
 
     print(f"written output to {output_filename}")
+
 
 def main():
     if len(sys.argv) >= 3:
