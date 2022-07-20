@@ -37,6 +37,10 @@ OTHER = [
 # Named Entities classes
 PERSON_NE_CLASS = "PERSON"  # , "GPE", "ORGANIZATION"
 
+# Constants to index PoS tagged token tuples, like ("Go", "VB")
+TOKEN_IDX = 0
+POS_IDX = 1
+
 
 def SortDecreasing(sort_me: Dict) -> Dict:
     return dict(sorted(sort_me.items(), key=lambda x: x[1], reverse=True))
@@ -57,8 +61,6 @@ def EstraiSequenzaPos(
     pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation=False
 ) -> List[str]:
     listaPOS: List[str] = []
-    TOKEN_IDX = 0
-    POS_IDX = 1
     for pos_taggged_token in pos_tagged_tokens:
         if exclude_punctuation and pos_taggged_token[POS_IDX] in ALL_PUNKTUATION:
             continue
@@ -70,8 +72,7 @@ def EstraiSequenzaPos(
 def count_avg_token_lenght(
     pos_tagged_tokens: List[Tuple[str, str]], exclude_punctuation: bool = True
 ):
-    TOKEN_IDX = 0
-    POS_IDX = 1
+
     tokens_count = 0
     charsTOTcount = 0
     for pos_taggged_token in pos_tagged_tokens:
@@ -275,9 +276,9 @@ def filter_bigrams_by_measure(
     :param topk:
     :return:
     """
-    TOK_IDX = 0
+    TOKEN_IDX = 0
     bare_bigrams_to_filter = [
-        (x[0][TOK_IDX], x[1][TOK_IDX]) for x in tokpos_bigrams_to_filter
+        (x[0][TOKEN_IDX], x[1][TOKEN_IDX]) for x in tokpos_bigrams_to_filter
     ]
 
     topk_bigrams_by_measure = dict()
@@ -295,7 +296,6 @@ def EstraiBigrammiPos(
     wanted_POS_first: List[str],
     wanted_POS_second: List[str],
 ) -> List[Tuple[Tuple[str, str], Tuple[str, str]]]:
-    POS_IDX = 1
 
     bigrammiEstratti = []
     bigrammiTokPos = nltk.bigrams(pos_tagged_tokens)
@@ -333,13 +333,10 @@ def get_tokens_filterd_by_POS(
     pos_tagged_tokens: List[Tuple[str, str]], wanted_POS: List[str]
 ) -> List[str]:
 
-    TOK_IDX = 0
-    POS_IDX = 1
-
     POS_list: List[str] = []
     for pos_tagged_token in pos_tagged_tokens:
         if pos_tagged_token[POS_IDX] in wanted_POS:
-            POS_list.append(pos_tagged_token[TOK_IDX])
+            POS_list.append(pos_tagged_token[TOKEN_IDX])
 
     return POS_list
 
@@ -368,8 +365,7 @@ def get_all_NEs(
 
     NE_by_class_and_POS: Dict[Tuple[str, str], List[str]] = dict()
     ne_chunk = nltk.ne_chunk(tokensPOS)
-    TOK_IDX = 0
-    POS_IDX = 1
+
     for node in ne_chunk:
         is_intermediate_node = hasattr(node, "label")
         if is_intermediate_node:
@@ -378,7 +374,7 @@ def get_all_NEs(
                     key: Tuple[str, str] = (node.label(), leaf[POS_IDX])
                     if key not in NE_by_class_and_POS:
                         NE_by_class_and_POS[key] = []
-                    NE_by_class_and_POS[key].append(leaf[TOK_IDX])
+                    NE_by_class_and_POS[key].append(leaf[TOKEN_IDX])
 
     return NE_by_class_and_POS
 
@@ -491,7 +487,6 @@ def get_sentence_prob_markov2(
 
 def get_percentage_of_word_classes(pos_tagged_tokens, word_classes: List[str]):
 
-    POS_IDX = 1
     tokens_count = 0
     for pos_taggged_token in pos_tagged_tokens:
         if pos_taggged_token[POS_IDX] in word_classes:
